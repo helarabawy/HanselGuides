@@ -16,6 +16,27 @@
 </head>
 
 <style>
+body {
+        margin: 0;
+        padding: 0;
+      }
+
+      #map {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        width: 100%;
+      }
+      
+      .marker {
+  background-image: url('red-pin-md.png');
+  background-size: cover;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
     #goToGuide {
         display: block;
         position: relative;
@@ -49,7 +70,14 @@
 </style>
 
 <body>
-
+<% int id = 0;
+	String[] locations;
+	locations = new String[3];
+	locations[0] = "-118.259757,34.083329";
+	locations[1] = "-118.260056,34.080067";
+	locations[2] = "-118.260629,34.077697";
+	String current_location = locations[0];
+	%>
 
 <br/>
 <div id='map'></div>
@@ -70,13 +98,39 @@
 		zoom: 9.7,
 		maxBounds: bounds // Sets bounds as max
 	});
+	
+	// code from the next step will go here!
+	var geojson = {
+	  type: 'FeatureCollection',
+	  features: [{
+	    type: 'Feature',
+	    geometry: {
+	      type: 'Point',
+	      coordinates: [-118.262,34.080]
+	    },
+	    properties: {
+	      title: 'Mapbox',
+	      description: 'California, Los Angeles'
+	    }
+	  }]
+	};
+
+
+	//add markers to map marker.geometry.coordinates
+	geojson.features.forEach(function(marker) {
+
+	  // create a HTML element for each feature
+	  var el = document.createElement('div');
+	  el.className = 'marker';
+
+	  // make a marker for each feature and add to the map
+	  new mapboxgl.Marker(el, { offset: [-50 / 2, -50 / 2] })
+	  .setLngLat([<%=current_location%>])
+	  .addTo(map);
+	});
 		
-	
-	
+
 </script>
-		
-		
-		
 	
 	
     	<button id='goToGuide' type="submit">Go To Guide</button>
@@ -89,7 +143,7 @@
 	
 	document.getElementById('goToGuide').addEventListener('click', function () {
 	    map.flyTo({
-	        "center": [-118.262,34.080],
+	        "center": [<%=current_location%>],
 	        "zoom": 16
 	    });
 	    goToGuide.style.visibility = "hidden"
@@ -98,31 +152,8 @@
 	
 	
 	document.getElementById('nextStop').addEventListener('click', function () {
-	   
-	});
-
-	<%
-	int id = 0;
-	String current_location;
-	String[] locations;
-	locations = new String[3];
-	locations[0] = "34.083329,-118.259757";
-	locations[1] = "34.080067,-118.260056";
-	locations[2] = "34.077697,-118.260629";
-	
-	/*
-	var popup = new mapboxgl.Popup({closeOnClick: false})
-	    .setLngLat([34.077697,-118.260629])
-	    .setHTML('<h1>Current Spot</h1>')
-	    .addTo(map);
-	*/
-	%>
-
-	
-	nextStop.style.visibility = "hidden"
-	
-	document.getElementById('nextStop').addEventListener('click', function () {
-		<% 
+		
+		<%
 		if (id<2){
 			id = id +1;
 		} if (id>=2){
@@ -130,40 +161,16 @@
 		} 
 		current_location = locations[id];
 		%>
-		
 		map.flyTo({
 	        "center": [<%=current_location%>],
 	        "zoom": 16
 	    });
 		
-		
-
-	    goToGuide.style.visibility = "hidden"
-	    nextStop.style.visibility = "visible"	
-	});
-	
-	
-	document.getElementById('nextStop').addEventListener('click', function () {
-	   
+	     
 	});
 
-    map.addControl(new mapboxgl.GeolocateControl());
-    
-    
-    map.on('load', function () {
 
-        map.addLayer({
-            'id': 'currentLocation',
-            'type': 'image',
-            'url': 'http://images.clipartpanda.com/pin-clipart-qTBXEXxEc.svg',
-        	'coordinates': [[34.082,-118.257],
-        		[34.084,-118.257],
-        		[34.084,-118.263],
-        		[34.082,-118.263]]  
-        });
-       
-    });
-    
+
 
 	
 	</script>
