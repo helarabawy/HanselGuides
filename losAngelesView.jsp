@@ -37,8 +37,101 @@ body {
   cursor: pointer;
 }
 
+	   #nextStop{
+        display: block;
+        position: absolute;
+        margin: 0px auto;
+        visibility: hidden;
+        width: 20%;
+        height:  60px;
+        top: 90%;
+        left:  5%;
+        padding: 10px;
+        border: none;
+        border-radius: 5px;
+        font-size: 25px;
+        text-align: center;
+        font-family: 'Verdana';
+        color: #fff;
+        background: #2D3A4B;
+        box-shadow: 10px 10px 5px #888888;
+      }
+      
+      	#location{
+        display: block;
+        position: absolute;
+        margin: 0px auto;
+        visibility: hidden;
+        width: 70%;
+        height:  200px;
+        top: 85%;
+        left:  28%;
+        padding: 10px;
+        border: none;
+        border-radius: 5px;
+        font-size: 40px;
+        text-align: center;
+        font-family: 'Verdana';
+        color: #2D3A4B;
+        background: #fff;
+        box-shadow: 10px 10px 5px #888888;
+    }
 
+	#first {
+        display: block;
+        position: absolute;
+        visibility : hidden;
+        margin: 0px auto;
+        width: 5%;
+        height: 50px;
+        top: 12%;
+        left: 52%;
+        padding: 10px;
+        border: none;
+        border-radius: 200px;
+        text-align: center;
+        font-family: 'Helvetica';
+        color: #fff;
+        background: #58C3B7;
+    }
+    
+    #second {
+        display: block;
+        position: absolute;
+        margin: 0px auto;
+        visibility: hidden;
+        width: 5%;
+        height: 50px;
+        top: 48%;
+        left: 48%;
+        padding: 10px;
+        border: none;
+        border-radius: 200px;
+        text-align: center;
+        font-family: 'Helvetica';
+        color: #fff;
+        background: #58C3B7;
+    }
+    
+    #third {
+        display: block;
+        position: absolute;
+        visibility: hidden;
+        margin: 0px auto;
+        width: 5%;
+        height: 50px;
+        top: 75%;
+        left: 39.6%;
+        padding: 10px;
+        border: none;
+        border-radius: 200px;
+        text-align: center;
+        font-family: 'Helvetica';
+        color: #fff;
+        background: #58C3B7;
+    }
 </style>
+
 
 <body>
 <% int id = 0;
@@ -92,52 +185,103 @@ body {
 </script>
 	
 	<script>
-	
-	
+		
 	function screenFly() {	
 		map.flyTo({
 	        "center": [<%=current_location%>],
 	        "zoom": 16.5,
 	        "speed": 0.65
-
 	 	});
+
+		 /*map.loadImage('https://upload.wikimedia.org/wikipedia/commons/thumb/6/60/Cat_silhouette.svg/400px-Cat_silhouette.svg.png', (error, image) => {
+		        if (error) throw error;
+		        map.addImage('cat', image);
+		        map.addLayer({
+		            "id": "points",
+		            "type": "symbol",
+		            "source": {
+		                "type": "geojson",
+		                "data": {
+		                    "type": "FeatureCollection",
+		                    "features": [{
+		                        "type": "Feature",
+		                        "geometry": {
+		                            "type": "Point",
+		                            "coordinates": [-118.259757,34.083329]
+		                        }
+		                    }]
+		                }
+		            },
+		            "layout": {
+		                "icon-image": "cat",
+		                "icon-size": 0.20,
+		                "icon-image": {
+		                    "base": 1,
+		                    "stops": [
+		                    	[0, ""],
+		                        [ 12, "cat"],
+		                        [ 22, "cat"]
+		                    ]
+		                }
+		            }
+		        });
+		    });*/
+		 
 	}
 	
-	setTimeout(screenFly, 2000);
-
-
+	setTimeout(screenFly, 2500);
 
 	
 	map.on('load', () => {
-	    map.loadImage('https://upload.wikimedia.org/wikipedia/commons/thumb/6/60/Cat_silhouette.svg/400px-Cat_silhouette.svg.png', (error, image) => {
-	        if (error) throw error;
-	        map.addImage('cat', image);
-	        map.addLayer({
-	            "id": "points",
-	            "type": "symbol",
-	            "source": {
-	                "type": "geojson",
-	                "data": {
-	                    "type": "FeatureCollection",
-	                    "features": [{
-	                        "type": "Feature",
-	                        "geometry": {
-	                            "type": "Point",
-	                            "coordinates": [-118.259757,34.083329]
-	                        }
-	                    }]
-	                }
-	            },
-	            "layout": {
-	                "icon-image": "cat",
-	                "icon-size": 0.25
-	            }
-	        });
-	    });
+
+
 	});
-	
-	
 
 	</script>
+		<button id='nextStop' type="submit">Next Stop ></button>
+		<button id='location' type="submit">Mayas' Tacos Restaurant</button>
+		<button id='first' type="submit"></button>
+		<button id='second' type="submit"></button>
+		<button id='third' type="submit"></button>
+
+		
+	<script>
+		function showButton() {	
+			document.getElementById('nextStop').style.visibility = "visible";
+			document.getElementById('location').style.visibility = "visible";
+		}
+		setTimeout(showButton, 3000);
+		
+		
+		function showFirstLocation() {	document.getElementById('first').style.visibility = "visible"; }
+		setTimeout(showFirstLocation, 4000);
+
+		
+		var x = "The Semi-Tropic";
+		currLoc_name = String(x);
+		
+		
+		document.getElementById('nextStop').addEventListener('click', function () {
+			document.getElementById('location').innerText = currLoc_name;
+			document.getElementById('first').style.visibility = "hidden";
+			
+			if (currLoc_name == "The Semi-Tropic")
+			{
+				document.getElementById('second').style.visibility = "visible";
+			}
+
+			if (currLoc_name == "Echoplex")
+			{
+				document.getElementById('second').style.visibility = "hidden";
+				document.getElementById('third').style.visibility = "visible";
+			}
+			
+			var x = "Echoplex";
+			currLoc_name = String(x);
+		});
+		
+
+	</script>
+	
 </body>
 </html>
