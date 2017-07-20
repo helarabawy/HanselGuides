@@ -37,43 +37,14 @@ body {
   cursor: pointer;
 }
 
-    #goToGuide {
-        display: block;
-        position: relative;
-        margin: 0px auto;
-        width: 50%;
-        height: 40px;
-        padding: 10px;
-        border: none;
-        border-radius: 3px;
-        font-size: 24px;
-        text-align: center;
-        color: #fff;
-        background: #ee8a65;
-    }
-    
-     #nextStop {
-        display: block;
-        position: absolute;
-        margin: 0px auto;
-        width: 20%;
-        height: 40px;
-        padding: 10px;
-        border: none;
-        border-radius: 3px;
-        font-size: 24px;
-        text-align: center;
-        color: #fff;
-        background: #ee8a65;
-   		top:85%;
-    }
+
 </style>
 
 <body>
 <% int id = 0;
 	String[] locations;
 	locations = new String[3];
-	locations[0] = "-118.259757,34.083329";
+	locations[0] = "-118.260056,34.080067";
 	locations[1] = "-118.260056,34.080067";
 	locations[2] = "-118.260629,34.077697";
 	String current_location = locations[0];
@@ -116,63 +87,57 @@ body {
 	};
 
 
-	//add markers to map marker.geometry.coordinates
-	geojson.features.forEach(function(marker) {
-
-	  // create a HTML element for each feature
-	  var el = document.createElement('div');
-	  el.className = 'marker';
-
-	  // make a marker for each feature and add to the map
-	  new mapboxgl.Marker(el, { offset: [-50 / 2, -50 / 2] })
-	  .setLngLat([<%=current_location%>])
-	  .addTo(map);
-	});
 		
 
 </script>
 	
-	
-    	<button id='goToGuide' type="submit">Go To Guide</button>
-  		<button id='nextStop' type="submit">Next Stop</button>
-		
-		
-	
 	<script>
-	nextStop.style.visibility = "hidden"
-	
-	document.getElementById('goToGuide').addEventListener('click', function () {
-	    map.flyTo({
-	        "center": [<%=current_location%>],
-	        "zoom": 16
-	    });
-	    goToGuide.style.visibility = "hidden"
-	    nextStop.style.visibility = "visible"	
-	});
 	
 	
-	document.getElementById('nextStop').addEventListener('click', function () {
-		
-		<%
-		if (id<2){
-			id = id +1;
-		} if (id>=2){
-			id = 0;
-		} 
-		current_location = locations[id];
-		%>
+	function screenFly() {	
 		map.flyTo({
 	        "center": [<%=current_location%>],
-	        "zoom": 16
-	    });
-		
-	     
-	});
+	        "zoom": 16.5,
+	        "speed": 0.65
 
+	 	});
+	}
+	
+	setTimeout(screenFly, 2000);
 
 
 
 	
+	map.on('load', () => {
+	    map.loadImage('https://upload.wikimedia.org/wikipedia/commons/thumb/6/60/Cat_silhouette.svg/400px-Cat_silhouette.svg.png', (error, image) => {
+	        if (error) throw error;
+	        map.addImage('cat', image);
+	        map.addLayer({
+	            "id": "points",
+	            "type": "symbol",
+	            "source": {
+	                "type": "geojson",
+	                "data": {
+	                    "type": "FeatureCollection",
+	                    "features": [{
+	                        "type": "Feature",
+	                        "geometry": {
+	                            "type": "Point",
+	                            "coordinates": [-118.259757,34.083329]
+	                        }
+	                    }]
+	                }
+	            },
+	            "layout": {
+	                "icon-image": "cat",
+	                "icon-size": 0.25
+	            }
+	        });
+	    });
+	});
+	
+	
+
 	</script>
 </body>
 </html>

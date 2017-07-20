@@ -26,13 +26,18 @@
         left: 25%;
         padding: 10px;
         border: none;
-        border-radius: 2px;
+        border-radius: 10px;
         font-size: 40px;
         text-align: center;
-        font-family: 'Verdana';
+        font-family: 'Helvetica';
         color: #fff;
         background: #58C3B7;
     }
+    
+    @media (orientation: portrait) {
+	.playfield { display: block; }
+	.overlay { display: none; }
+}
 	
 </style>
 	
@@ -44,6 +49,7 @@
 			location.href = "/Hansel_Test/views/menuView.jsp";
 		});
 	</script>
+	
 	
 </html>
 
