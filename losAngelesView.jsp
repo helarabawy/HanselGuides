@@ -77,59 +77,7 @@ body {
         box-shadow: 10px 10px 5px #888888;
     }
 
-	#first {
-        display: block;
-        position: absolute;
-        visibility : hidden;
-        margin: 0px auto;
-        width: 5%;
-        height: 50px;
-        top: 12%;
-        left: 52%;
-        padding: 10px;
-        border: none;
-        border-radius: 200px;
-        text-align: center;
-        font-family: 'Helvetica';
-        color: #fff;
-        background: #58C3B7;
-    }
-    
-    #second {
-        display: block;
-        position: absolute;
-        margin: 0px auto;
-        visibility: hidden;
-        width: 5%;
-        height: 50px;
-        top: 48%;
-        left: 48%;
-        padding: 10px;
-        border: none;
-        border-radius: 200px;
-        text-align: center;
-        font-family: 'Helvetica';
-        color: #fff;
-        background: #58C3B7;
-    }
-    
-    #third {
-        display: block;
-        position: absolute;
-        visibility: hidden;
-        margin: 0px auto;
-        width: 5%;
-        height: 50px;
-        top: 75%;
-        left: 39.6%;
-        padding: 10px;
-        border: none;
-        border-radius: 200px;
-        text-align: center;
-        font-family: 'Helvetica';
-        color: #fff;
-        background: #58C3B7;
-    }
+
 </style>
 
 
@@ -240,22 +188,53 @@ body {
 	</script>
 		<button id='nextStop' type="submit">Next Stop ></button>
 		<button id='location' type="submit">Mayas' Tacos Restaurant</button>
-		<button id='first' type="submit"></button>
-		<button id='second' type="submit"></button>
-		<button id='third' type="submit"></button>
 
 		
 	<script>
 		function showButton() {	
 			document.getElementById('nextStop').style.visibility = "visible";
 			document.getElementById('location').style.visibility = "visible";
+			
+			map.loadImage('https://upload.wikimedia.org/wikipedia/commons/thumb/6/60/Cat_silhouette.svg/400px-Cat_silhouette.svg.png', (error, image) => {
+		        if (error) throw error;
+		        map.addImage('cat', image);
+		        map.addLayer({
+		            "id": "points",
+		            "type": "symbol",
+		            "source": {
+		                "type": "geojson",
+		                "data": {
+		                    "type": "FeatureCollection",
+		                    "features": [{
+		                        "type": "Feature",
+		                        "geometry": {
+		                            "type": "Point",
+		                            "coordinates": [-118.259728,34.083426]
+		                        },
+		                        "properties": {
+		                        //	"title": "1",
+		                        }
+		                    }]
+		                }
+		            },
+		            "layout": {
+		                "icon-image": "cat",
+		                "icon-size": 0.25,
+		                "text-field": "{title}",
+		                "text-anchor": "top",
+		            },
+		           "paint": {
+		                 "text-color": "#ffffff",
+		            },
+		            
+		        });
+		    });
 		}
 		setTimeout(showButton, 3000);
 		
 		
-		function showFirstLocation() {	document.getElementById('first').style.visibility = "visible"; }
-		setTimeout(showFirstLocation, 4000);
-
+		/*function currentLocation() {
+	        map.getSource('points').setData({"type": "Point", "coordinates": [-118.260629,34.077697]}); }*/
 		
 		var x = "The Semi-Tropic";
 		currLoc_name = String(x);
@@ -263,18 +242,21 @@ body {
 		
 		document.getElementById('nextStop').addEventListener('click', function () {
 			document.getElementById('location').innerText = currLoc_name;
-			document.getElementById('first').style.visibility = "hidden";
+			map.getSource('points').setData({"geometry": {"type": "Point",
+				"coordinates": [-118.260629,34.077697] }, "type": "Feature", "properties": {"title":"2",}});
 			
-			if (currLoc_name == "The Semi-Tropic")
+			
+			
+			/*if (currLoc_name == "The Semi-Tropic")
 			{
-				document.getElementById('second').style.visibility = "visible";
+				map.getSource('points').setData({"type": "Point", "coordinates": [-118.260056, 34.080067]});
+
 			}
 
 			if (currLoc_name == "Echoplex")
 			{
-				document.getElementById('second').style.visibility = "hidden";
-				document.getElementById('third').style.visibility = "visible";
-			}
+				map.getSource('points').setData({"type": "Point", "coordinates": [-118.260629,34.077697]});
+			}*/
 			
 			var x = "Echoplex";
 			currLoc_name = String(x);
