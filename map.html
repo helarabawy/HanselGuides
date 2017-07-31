@@ -168,7 +168,7 @@ function loadIcons() {
 </script>
 
 
-    <div class="map-nav-container">
+  <div class="map-nav-container">
     
     <button class="map-nav-btn" type="button">
 	<i class="material-icons map-nav-btn-icon centered-y">navigation</i>
@@ -192,7 +192,8 @@ function loadIcons() {
   
   </div>
     
-	 <div id="place-box">
+	<div id="place-box" align=center>
+	    <span>Mayas' Tacos Restaurant</span>
     </div>
     
     <div id="next-stop-btn">
@@ -204,57 +205,17 @@ function loadIcons() {
   
   
   <script>
-  
-//////////// LOADING CURRENT ATTRACTION ////////////
-  function showCurrentLocation() {
-	 /* map.loadImage('https://upload.wikimedia.org/wikipedia/commons/thumb/6/60/Cat_silhouette.svg/400px-Cat_silhouette.svg.png', (error, image) => {
-	        if (error) throw error;
-	        map.addImage('cat', image);
-	        map.addLayer({
-	            "id": "currentLocation",
-	            "type": "symbol",
-	            "source": {
-	                "type": "geojson",
-	                "data": {
-	                    "type": "FeatureCollection",
-	                    "features": [{
-	                        "type": "Feature",
-	                        "geometry": {
-	                            "type": "Point",
-	                            "coordinates": [-118.259757,34.083329]
-	                        },
-	                        "properties": {
-	                        	"title": "1",
-	                        }
-	                    }]
-	                }
-	            },
-	            "layout": {
-	                "icon-image": "cat",
-	                "icon-size": 0.25,
-	                "text-field": "{title}",
-	                "text-anchor": "top",
-	            },
-	           "paint": {
-	                 "text-color": "#ffffff",
-	            },
-	            
-	        });
-	    });*/
-  }
-  
-////////////SHOWING ALL ATTRACTIONS ////////////
+    
+//////////// SHOWING ALL ATTRACTIONS ////////////
   function showIcons(){
 	  map.on('load', loadIcons());
   }
   
  
 //////////// SETTNG TIMEOUT TO CALL FUNCTIONS ////////////
- setTimeout(showCurrentLocation, 3000);
  setTimeout(showIcons, 3000);
 
-  
-  
+
  //////// GIVING FUNCTIONALITY TO NEXT BUTTON //////////
 	var counter = 1;
  
@@ -262,14 +223,17 @@ function loadIcons() {
 		counter = counter + 1;
 
 		if (counter == 2) {
+			currName = "The Semi-Tropic";
 			map.getSource('test2').setData({"geometry": {"type": "Point",
 				"coordinates": [-118.259931,34.080014] }, "type": "Feature", "properties": {"title":counter,}});
 		
 		} else if (counter == 3) {
+			currName = "Echoplex";
 			map.getSource('test2').setData({"geometry": {"type": "Point",
 				"coordinates": [-118.260629,34.077697] }, "type": "Feature", "properties": {"title":counter,}});
 		
 		} else if (counter == 4) {
+			currName = "Bellisimo Venice";
 			map.flyTo({
 		        "center": [-118.472,33.984910],
 		        "zoom": 14.5,
@@ -279,17 +243,20 @@ function loadIcons() {
 			map.getSource('test2').setData({"geometry": {"type": "Point",
 				"coordinates": [-118.470284,33.984910] }, "type": "Feature", "properties": {"title":counter,}});
 		
-		} else if (counter == 5) {			
+		} else if (counter == 5) {	
+			currName = "Venice Canals";
 			map.getSource('test2').setData({"geometry": {"type": "Point",
 				"coordinates": [-118.467308,33.983648] }, "type": "Feature", "properties": {"title":counter,}});
 		
 		} else if (counter == 6) {
+			currName = "Venice Skate Park";
 			map.getSource('test2').setData({"geometry": {"type": "Point",
 				"coordinates": [-118.475362,33.986873] }, "type": "Feature", "properties": {"title":counter,}});
 		} else {
 			counter = counter - 1;
 		}
 		
+		document.getElementById('place-box').innerHTML = currName;
 	}
 		
 	document.getElementById('nextStop').addEventListener('click', goToNextStop);
