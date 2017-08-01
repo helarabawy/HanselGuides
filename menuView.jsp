@@ -1,8 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport' />
+	<meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1, maximum-scale=1">
   <link rel="stylesheet" href="css/menuViewStyle.css">
   <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
 </head>
@@ -36,7 +35,7 @@
 
 	<div class="main-container">
 		<form>
-			<button class="btn" type="submit" formaction="map.html"><span>Los Angeles</span></button>
+			<button class="btn" type="submit" formaction="mapView.html"><span>Los Angeles</span></button>
 		</form>	
 	    <button class="btn" type="submit"><span>New Orleans</span></button>
 	    <button class="btn" type="submit"><span>Brooklyn</span></button>
@@ -48,6 +47,8 @@
 	    <button class="btn btn-disabled" type="button"><span>Santiago</span></button>
     
     </div>
+   
+   
    
 	  	
 	  	
