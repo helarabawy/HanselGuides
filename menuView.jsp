@@ -35,9 +35,12 @@
 
 	<div class="main-container">
 		<form>
-			<button class="btn" type="submit" formaction="mapView.html"><span>Los Angeles</span></button>
+			<button class="btn" type="submit" formaction="mapView.jsp"><span>Los Angeles</span></button>
+		</form>
+		
+		<form>
+			<button class="btn" type="submit" formaction="swipetest.jsp"><span>New Orleans</span></button>
 		</form>	
-	    <button class="btn" type="submit"><span>New Orleans</span></button>
 	    <button class="btn" type="submit"><span>Brooklyn</span></button>
 	    <button class="btn btn-disabled" type="submit"><span>Santa Barbara</span></button>
 	    <button class="btn btn-disabled" type="submit"><span>San Diego</span></button>
