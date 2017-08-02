@@ -144,17 +144,6 @@ a {
     z-index: 2;  
 }
 
-#flip {
-	position: absolute;
-    padding: 20px;
-    text-align: center;
-    background-color: #e5eecc;
-    height: 40px;
-    border: solid 1px #c3c3c3;
-    z-index: 2;  
-    
-}
-
 
 /*--------------*/
 .centered-x {

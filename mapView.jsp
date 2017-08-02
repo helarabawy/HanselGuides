@@ -160,10 +160,7 @@ function loadIcons() {
 	<div id="place-box" align=center>
 	    <span>Mayas' Tacos Restaurant</span>
     </div>
-    <div id="flip" align=center>
-	    <span>Click to slide the panel down or up</span>
-    </div>
-  
+
   
    <script src="https://hammerjs.github.io/dist/hammer.js"></script>
 
@@ -358,9 +355,18 @@ function loadIcons() {
 	
 	setTimeout(screenFly, 2500);
 	
+	//SWIPE UP/DOWN
 	
+	var card = document.getElementById('place-box');
+
+	//create a simple instance
+	//by default, it only adds horizontal recognizers
+	var cardVerticalSwipe = new Hammer(card);
 	
-	
+	//let the pan gesture support all directions.
+	//this will block the vertical scrolling on a touch-device while on the element
+	cardVerticalSwipe.get('pan').set({ direction: Hammer.DIRECTION_ALL });
+
 	
 	
 	
@@ -368,28 +374,18 @@ function loadIcons() {
 	// MAXIMIZE/MINIMIZE WINDOW
 	var x = true;
 	   $(document).ready(function() {
-			//if (x==true)
-	        {
-				$('#place-box').animate({height: '50px'}); 
-	        } /*else {
-	        	$('#place-box').animate({height: '75%'});	
-	        }*/
-	        
+			$('#place-box').animate({height: '50px'}); 
 
-
-	    // toggles the slickbox on clicking the noted link
-	    $('#flip').click(function() {
-
-			if (x==true)
-	        {
-	       			 $('#place-box').animate({height: '75%'});
-				
-	        } else {
-	        		$('#place-box').animate({height: '50px'}); 
-	        }
-	        x = !x;
-	        return false;
-	    });
+	    
+	    mc.on("panup", function(ev) {
+  			   $('#place-box').animate({height: '75%'});
+	    	});
+	    
+	    mc.on("pandown", function(ev) {
+    		   $('#place-box').animate({height: '50px'}); 
+	    	});
+	    
+	    
 	});
 
 	</script>
