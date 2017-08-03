@@ -35,7 +35,7 @@
 
 	<div class="main-container">
 		<form>
-			<button class="btn" type="submit" formaction="mapView.jsp"><span>Los Angeles</span></button>
+			<button class="btn" type="submit" formaction="losAngelesView.jsp"><span>Los Angeles</span></button>
 		</form>
 		
 		<form>
