@@ -4,7 +4,6 @@
 	<!DOCTYPE html>
 <html>
 <head>
-<meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1, maximum-scale=1">
   <link rel="stylesheet" href="css/mapViewStyle.css">
   <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
   <script src="https://hammerjs.github.io/dist/hammer.js"></script>
@@ -37,16 +36,20 @@ var map = new mapboxgl.Map({
 	Statement statement = null;
 	Statement statement1 = null;
 	Statement statement2 = null;
+	Statement statement3 = null;
 	PreparedStatement preparedStatement = null;
 	ResultSet resultSet = null;
 	ResultSet resultSet1 = null;
 	ResultSet resultSet2 = null;
+	ResultSet resultSet3 = null;
+
 	
 	//variables
 	int k = 1;
 	String rowCount = "0";
 	String firstX = "0";
 	String firstY = "0";
+	String firstName = "";
 	String x;
 	String y;
 	String place_description;
@@ -56,15 +59,19 @@ var map = new mapboxgl.Map({
 	Connection connect = conn.makeConnect();
 	Connection connect1 = conn.makeConnect();
 	Connection connect2 = conn.makeConnect();
+	Connection connect3 = conn.makeConnect();
 	statement = connect.createStatement();
 	statement1 = connect1.createStatement();
 	statement2 = connect2.createStatement();
+	statement3 = connect3.createStatement();
+
 	
 	//the next line is where the SQL query/command is putx
 	resultSet = statement.executeQuery("SELECT * FROM LosAngeles");
 	resultSet1 = statement1.executeQuery("SELECT count(*) FROM LosAngeles");
 	resultSet2 = statement2.executeQuery("SELECT * FROM LosAngeles WHERE id=1");
-	
+	resultSet3 = statement3.executeQuery("SELECT * FROM LosAngeles");
+
 	//obtaining number of rows from query and storing it in rowCount
 	while(resultSet1.next()){
 		rowCount = resultSet1.getString("count(*)");
@@ -74,38 +81,33 @@ var map = new mapboxgl.Map({
 	while(resultSet2.next()){
 		firstX = resultSet2.getString("x");
 		firstY = resultSet2.getString("y");
+		firstName = resultSet2.getString("place_name");
 	} resultSet2.close();
 	
 	
-	//this is where you retrieve the values from the table and store them in variables
-	//btw,the condition for this while loop 'resultSet.next()' basically means that while there is a row that I can read, do the following:
-	//if there were multiple rows selected(which isn't the case rn since I only selected one row), then the loop would loop for the amount of rows that are selected, and the values would change based on what row is selected
-    while(resultSet.next()){
-		//the stuff in quotes is the name of the column in the table
-		x = resultSet.getString("x");
-		y = resultSet.getString("y");
-		place_description = resultSet.getString("place_description");
-	}
 %>
 
 <script>
 var totalSpotCount = <%=rowCount%>; // pull data # of rows
 
 var datatext = {};
-datatext['type'] = 'FeatureCollection';
+datatext['type'] = "FeatureCollection";
 datatext['features'] = [];
 
 <%
 while (resultSet.next()){
 %>
+	var xVal = <%=resultSet.getString("x")%>;
+	var yVal =  <%=resultSet.getString("y")%>;
+	var place_id = <%=resultSet.getString("place_id")%>;
 	var newFeature = {
 		"type": "Feature",
 		"geometry": {
 			"type": "Point",
-			"coordinates": [-118.259757,34.083329]
+			"coordinates": [xVal,yVal]
 		},
 		"properties": {
-			"title": "2",
+			"title": place_id,
 		}
 	}
 	datatext['features'].push(newFeature);
@@ -113,6 +115,10 @@ while (resultSet.next()){
 }
 resultSet.close();
 %>
+
+///////////////////////////////////////////
+////// CHECKING CONTENTS OF DATATEXT //////
+///////////////////////////////////////////
 
 var datatext2 ={
         "type": "FeatureCollection",
@@ -123,6 +129,8 @@ var datatext2 ={
                 "coordinates": [<%=firstX%>,<%=firstY%>]
             }, "properties": {"title": "1"}}]
     };
+
+    
 </script>
 
 <script>
@@ -216,19 +224,9 @@ function loadIcons() {
  
  //////// GIVING FUNCTIONALITY TO NEXT BUTTON //////////
 	var counter = 1;
- /*
+ 
  	goTo(int counter) {
  		
- 		document.getElementById('place-box').innerHTML = text, do something similar for description; 		
- 		
- 		map.getSource('test2').setData({"geometry": {"type": "Point",
-			"coordinates": [here ill put the coordinates I pulled] }, "type": "Feature", "properties": {"title":counter,}});
-		
-		map.flyTo({
-	        "center": [here ill put the coordinates I pulled],
-	        "zoom": 14.5,
-	        "speed": 0.65
-	 	});
  	}
 	
  	// going to next stop
@@ -243,7 +241,7 @@ function loadIcons() {
 	 
  	// going to last stop
 	 function goToLastStop() {	
-		 if (counter =< 1) {
+		 if (counter <= 1) {
 				return;
 			} else {
 				counter = counter - 1;	
@@ -253,7 +251,7 @@ function loadIcons() {
 		
 		mc.on("swipeleft", goToNextStop);
 		mc.on("swiperight", goToLastStop);
-*/
+
 		
 	function screenFly() {	
 		map.flyTo({
