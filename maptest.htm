@@ -1,66 +1,50 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1, maximum-scale=1">
-  <link rel="stylesheet" href="css/mapViewStyle.css">
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-  <script src="https://hammerjs.github.io/dist/hammer.js"></script>
-<script> 
-
-// SWIPE GESTURE
-/*var myElement = document.getElementById('panel');
-
-//create a simple instance
-//by default, it only adds horizontal recognizers
-var mc = new Hammer(myElement);
-
-//let the pan gesture support all directions.
-//this will block the vertical scrolling on a touch-device while on the element
-mc.get('pan').set({ direction: Hammer.DIRECTION_ALL });
-
-mc.on("panup pandown", function(ev) {
-	 myElement.textContent = ev.type +" gesture detected.";
-	});*/
-
-// MAX MIN FUNCTIONS
-
-
-
-// MAXIMIZE/MINIMIZE WINDOW
-var x = true;
-   $(document).ready(function() {
-		if (x==true)
-        {
-			$('#panel').animate({height: '50px'}); 
-        } else {
-        	$('#panel').animate({height: '75%'});	
-        }
-        
-
-
-    // toggles the slickbox on clicking the noted link
-    $('#flip').click(function() {
-
-		if (x==true)
-        {
-       			 $('#panel').animate({height: '75%'});
-			
-        } else {
-        		$('#panel').animate({height: '20px'}); 
-        }
-        x = !x;
-        return false;
-    });
-});
-
-</script>
-
-
+    <title>Simple Leaflet Map</title>
+    <meta charset="utf-8" />
+    <link 
+        rel="stylesheet" 
+        href="http://cdn.leafletjs.com/leaflet-0.7/leaflet.css"
+    />
 </head>
 <body>
- 
-<div id="flip">Click to slide the panel down or up</div>
-<div id="panel">Hello world!</div>
 
+    <div id="map" style="width: 600px; height: 400px"></div>
+
+    <script
+        src="http://cdn.leafletjs.com/leaflet-0.7/leaflet.js">
+    </script>
+
+    <script>
+
+	var planes = [
+		["7C6B07",-40.99497,174.50808],
+		["7C6B38",-41.30269,173.63696],
+		["7C6CA1",-41.49413,173.5421],
+		["7C6CA2",-40.98585,174.50659],
+		["C81D9D",-40.93163,173.81726],
+		["C82009",-41.5183,174.78081],
+		["C82081",-41.42079,173.5783],
+		["C820AB",-42.08414,173.96632],
+		["C820B6",-41.51285,173.53274]
+		];
+
+        var map = L.map('map').setView([-41.3058, 174.82082], 8);
+        mapLink = 
+            '<a href="http://openstreetmap.org">OpenStreetMap</a>';
+        L.tileLayer(
+            'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; ' + mapLink + ' Contributors',
+            maxZoom: 18,
+            }).addTo(map);
+
+		for (var i = 0; i < planes.length; i++) {
+			marker = new L.marker([planes[i][1],planes[i][2]])
+				.bindPopup(planes[i][0])
+				.addTo(map);
+		}
+               
+    </script>
 </body>
 </html>
