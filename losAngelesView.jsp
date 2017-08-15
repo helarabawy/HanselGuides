@@ -1,9 +1,9 @@
-
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
     pageEncoding="ISO-8859-1" import="com.hansel.test.conn.MySQLConn,java.sql.Connection,java.sql.DriverManager,java.sql.SQLException,java.sql.Statement,java.sql.PreparedStatement,java.sql.ResultSet"%>
 	<!DOCTYPE html>
 <html>
 <head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="css/mapViewStyle.css">
   <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
   <script src="https://hammerjs.github.io/dist/hammer.js"></script>
@@ -31,7 +31,7 @@ var map = new mapboxgl.Map({
 });
 </script>
 
-<% 
+<%-- 
 	//setting up variables (will need to do this in every jsp that needs stuff from Database)
 	Statement statement = null;
 	Statement statement1 = null;
@@ -42,10 +42,10 @@ var map = new mapboxgl.Map({
 	ResultSet resultSet1 = null;
 	ResultSet resultSet2 = null;
 	ResultSet resultSet3 = null;
-
 	
 	//variables
 	int k = 1;
+	int rowCountInt;
 	String rowCount = "0";
 	String firstX = "0";
 	String firstY = "0";
@@ -63,20 +63,20 @@ var map = new mapboxgl.Map({
 	statement = connect.createStatement();
 	statement1 = connect1.createStatement();
 	statement2 = connect2.createStatement();
-	statement3 = connect3.createStatement();
-
+	statement3 = connect3.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,  
+            ResultSet.CONCUR_UPDATABLE);
 	
 	//the next line is where the SQL query/command is putx
 	resultSet = statement.executeQuery("SELECT * FROM LosAngeles");
 	resultSet1 = statement1.executeQuery("SELECT count(*) FROM LosAngeles");
 	resultSet2 = statement2.executeQuery("SELECT * FROM LosAngeles WHERE id=1");
 	resultSet3 = statement3.executeQuery("SELECT * FROM LosAngeles");
-
 	//obtaining number of rows from query and storing it in rowCount
 	while(resultSet1.next()){
 		rowCount = resultSet1.getString("count(*)");
 	} resultSet1.close();
 	
+	rowCountInt = Integer.parseInt(rowCount);
 	//obtaining first coordinates from query for dataText2 and storing it in firstX and firstY
 	while(resultSet2.next()){
 		firstX = resultSet2.getString("x");
@@ -84,16 +84,22 @@ var map = new mapboxgl.Map({
 		firstName = resultSet2.getString("place_name");
 	} resultSet2.close();
 	
-	
-%>
+--%>
 
 <script>
-var totalSpotCount = <%=rowCount%>; // pull data # of rows
 
+var dataArray = new Array();
+
+
+
+
+
+
+
+var totalSpotCount = <%=rowCount%>; // pull data # of rows
 var datatext = {};
 datatext['type'] = "FeatureCollection";
 datatext['features'] = [];
-
 <%
 while (resultSet.next()){
 %>
@@ -115,11 +121,9 @@ while (resultSet.next()){
 }
 resultSet.close();
 %>
-
 ///////////////////////////////////////////
 ////// CHECKING CONTENTS OF DATATEXT //////
 ///////////////////////////////////////////
-
 var datatext2 ={
         "type": "FeatureCollection",
         "features": [{
@@ -129,7 +133,6 @@ var datatext2 ={
                 "coordinates": [<%=firstX%>,<%=firstY%>]
             }, "properties": {"title": "1"}}]
     };
-
     
 </script>
 
@@ -190,7 +193,7 @@ function loadIcons() {
 
     
 	<div id="place-box" align=center>
-	    <span>Mayas' Tacos Restaurant</span>
+	    <span><%=firstName%></span>
     </div>
 
   
@@ -223,42 +226,62 @@ function loadIcons() {
  setTimeout(showIcons, 3000);
  
  //////// GIVING FUNCTIONALITY TO NEXT BUTTON //////////
-	var counter = 1;
+//
+
+ 	<%! int index = 1; %>
  
- 	goTo(int counter) {
- 		
+ 	function goToIndex() {
+ 		<%
+		  if (resultSet3.absolute(5)){
+		%>
+			var xVal = <%=resultSet3.getString("x")%>;
+			var yVal= <%=resultSet3.getString("y")%>;
+			var placeID= <%=resultSet3.getString("place_id")%>;
+			
+			map.getSource('test2').setData({"geometry": {"type": "Point",
+				"coordinates": [xVal, yVal] }, "type": "Feature", "properties": {"title":placeID,}});
+			
+			map.flyTo({
+		        "center": [xVal, yVal],
+		        "zoom": 14.5,
+		        "speed": 0.7
+		 	});
+			
+			document.getElementById('place-box').innerHTML = <%=index%>;
+		<%
+			} else
+				resultSet3.close();
+		%>			
  	}
 	
  	// going to next stop
- 	function goToNextStop() {	
-		if (counter >= totalSpotCount) {
-			return;
-		} else {
-			counter = counter + 1;	
-		}
-		goTo(counter);
-	 }
+ 	function goToNextStop() {
+		<% index++; %>
+		goToIndex();
+ 	}
+ 	
+ 	function goToPrevStop() {	
+		<% index--; %>
+		goToIndex();
+ 	}
+
+//
+//
+//
+
 	 
- 	// going to last stop
-	 function goToLastStop() {	
-		 if (counter <= 1) {
-				return;
-			} else {
-				counter = counter - 1;	
-			}
-			goTo(counter);
-		}
+
+
 		
 		mc.on("swipeleft", goToNextStop);
-		mc.on("swiperight", goToLastStop);
-
+		mc.on("swiperight", goToPrevStop);
 		
 	function screenFly() {	
 		map.flyTo({
 	        "center": [-118.259757,34.083329],
 	        "zoom": 14.75,
 	        "speed": 0.65
-	 	});	 
+	 	});
 	}
 	
 	setTimeout(screenFly, 2500);
@@ -280,14 +303,14 @@ function loadIcons() {
 	// MAXIMIZE/MINIMIZE WINDOW
 	var x = true;
 	   $(document).ready(function() {
-			$('#place-box').animate({height: '50px'}); 
+			$('#place-box').animate({height: '15%'}); 
 	    
 	    mc.on("panup", function(ev) {
   			   $('#place-box').animate({height: '75%'});
 	    	});
 	    
 	    mc.on("pandown", function(ev) {
-    		   $('#place-box').animate({height: '50px'}); 
+    		   $('#place-box').animate({height: '15%'}); 
 	    	});
 	    
 	    
@@ -299,7 +322,8 @@ function loadIcons() {
 <script>
 	
 	///////////////////// LOADING MAP ////////////////////////////
-	map.on('load', () => {});
+	map.on('load', () => {
+	});
 </script>
 
 
