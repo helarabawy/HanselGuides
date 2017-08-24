@@ -31,28 +31,55 @@
   </header>
   
  </body>
+ 
+  <script>
+  var currLoc = "";
   
-
-	<div class="main-container">
-		<form>
-			<button class="btn" type="submit" formaction="losAngelesView.jsp"><span>Los Angeles</span></button>
-		</form>
-		
-		<form>
-			<button class="btn" type="submit" formaction="swipetest.jsp"><span>New Orleans</span></button>
-		</form>	
-	    <button class="btn" type="submit"><span>Brooklyn</span></button>
-	    <button class="btn btn-disabled" type="submit"><span>Santa Barbara</span></button>
-	    <button class="btn btn-disabled" type="submit"><span>San Diego</span></button>
-	    <button class="btn btn-disabled" type="button"><span>Kauai</span></button>
-	    <button class="btn btn-disabled" type="button"><span>Seattle</span></button>
-	    <button class="btn btn-disabled" type="button"><span>Cairo</span></button>
-	    <button class="btn btn-disabled" type="button"><span>Santiago</span></button>
+     	function goToWestwood() { 
+     		if (currLoc != "Westwood") {
+     			<%session.setAttribute("Location", "Westwood");%>;
+     			currLoc = "Westwood";
+     		}
+     	}
+     	
+     	function goToDowntown() {
+     		if (currLoc != "Downtown") {
+	     		<%session.setAttribute("Location", "Downtown");%>;
+	 			currLoc = "Downtown";
+     		}
+     	}
+     	
+     	function goToEchoPark() { 
+     		if (currLoc != "EchoPark") {
+	     		<%session.setAttribute("Location", "EchoPark");%>;
+	 			currLoc = "EchoPark";
+     		}
+     	}
+     	
+     	function goToVeniceBeach() { 
+     	}
+  </script>
     
+	<div class="main-container">
+
+		<form> <button id="Westwood" class="btn" type="submit" formaction="templateMapView1.jsp" 
+		onclick="goToWestwood()">
+		<span>Westwood</span></button></form>	
+
+		<form> <button id="Downtown" class="btn" type="submit" formaction="templateMapView1.jsp" 
+		onclick="goToDowntown()">
+		<span>Downtown</span></button></form>	
+		
+		<form> <button id="EchoPark" class="btn" type="submit" formaction="templateMapView1.jsp" 
+		onclick="goToEchoPark()">
+		<span>Echo Park</span></button></form>	
+
+		<form> <button id="Venice Beach" class="btn" type="submit" formaction="templateMapView1.jsp" 
+		onclick="goToVeniceBeach()">
+		<span>Venice Beach</span></button></form>	
+
     </div>
+    
    
-   
-   
-	  	
-	  	
+ 
 </html>
