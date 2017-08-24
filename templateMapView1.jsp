@@ -5,16 +5,17 @@
 	<head>
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
-	  <link rel="stylesheet" href="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css"><!-- POPUP -->
-	  <script src="https://code.jquery.com/jquery-1.11.3.min.js"></script> <!-- POPUP -->
-	  <script src="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js" ></script> <!-- POPUP -->
+	  <link rel="stylesheet" href="css/mapViewStyle7.css">
+	  
+	 <!--  <link rel="stylesheet" href="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css"><!-- POPUP -->  
+	 <!--  <script src="https://code.jquery.com/jquery-1.11.3.min.js"></script> <!-- POPUP -->  
+	 <!--  <script src="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js" ></script> <!-- POPUP -->
 	  <script src="https://hammerjs.github.io/dist/hammer.js"></script>
 	  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 	  <script src="https://hammerjs.github.io/dist/hammer.js"></script>
 	  <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.39.1/mapbox-gl.js'></script>
 	  <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.39.1/mapbox-gl.css' rel='stylesheet' />
 	  
-	  	  <link rel="stylesheet" href="css/mapViewStyle6.css">
 	  
 	    <style>
 	        body { margin:0; padding:0; }
@@ -25,7 +26,7 @@
 <body>
 
 <% 
-//String LocationName = (String)session.getAttribute("Location");
+// String LocationName = (String)session.getAttribute("Location");
 String LocationName = (String)session.getAttribute("Location");
 	
 	//////////////////////////////////////////////////////////////////////////
@@ -283,20 +284,12 @@ setTimeout(showIcons, 3000);
             <div id="go-icon" class="material-icons centered-x">navigation</div>
             <div class="icon-text centered-x">GO!</div>
         </div>
-        <div id="place-image">
-            <a href="#myPopup" data-rel="popup" data-position-to="window">
-			    <img id="image-link">
-			 </a>
-			 
-			<div data-role="popup" id="myPopup">
-		      <a href="#pageone" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-delete ui-btn-icon-notext ui-btn-right"></a>
-		      <img id="maximized-image" style="width:200%;height:200%;">
-		    </div>
-					    
-		  </div>
-        	
+        <div id="place-image" onclick="imagePopUp()">
+			    <img id="image-link">        	
         </div>
  </div>
+  
+  
   
  <script> 
 	////////////////////////////////////////////////////////////////////////
@@ -330,8 +323,10 @@ setTimeout(showIcons, 3000);
 		document.getElementById('title-emoji').innerHTML = emojis[index];
 		document.getElementById('activity').innerHTML = placeActivities[index];
 		document.getElementById('image-link').src = "/Hansel_Test/placeImages/" + LocationName + "/" + images[index] + ".png";
-		document.getElementById('maximized-image').src = "/Hansel_Test/placeImages/" + LocationName + "/" + images[index] + ".png";
+		document.getElementById('img-popup').src = "/Hansel_Test/placeImages/" + LocationName + "/" + images[index] + ".png";
+		document.getElementById('img-popup').src = "/Hansel_Test/placeImages/" + LocationName + "/" + images[index] + ".png";
 
+		
 		var newIDValue = index + 1;
 		var newID = "p" + newIDValue;
 		document.getElementsByClassName("active")[0].classList.remove("active");
@@ -430,7 +425,7 @@ setTimeout(showIcons, 3000);
 	
 	
 //////////////////////////////////////////////////////////////////////////
-////////////////////////////HEADER FUNCTIONS ////////////////////////////
+////////////////////////////JS FUNCTIONS ////////////////////////////
 //////////////////////////////////////////////////////////////////////////
 function expand() {
 	document.getElementById("fixed-header").style.height = "100%";
@@ -455,10 +450,26 @@ function onClick(place) {
 function updateIndex(place) {
 	index = place.id.substring(1) - 1;
 }
+
+function imagePopUp(){
+	document.getElementById("img-popup").src = "/Hansel_Test/placeImages/" + LocationName + "/" + images[index] + ".png";
+    document.getElementById("img-popup").style.display = "block";
+}
+function imagePopDown(){
+	document.getElementById("img-popup").src = "/Hansel_Test/placeImages/" + LocationName + "/" + images[index] + ".png";
+    document.getElementById("img-popup").style.display = "none";
+    
+}
 		////////////////////////////////////////////////////////////////////////
 		//////////////////////////// LOADING MAP ///////////////////////////////
 		////////////////////////////////////////////////////////////////////////
 		//map.on('load', () => {});
-</script>   
+</script> 
+
+<div id="img-popup" onclick="imagePopDown()">
+        <button id="img-close-btn" class="material-icons" onclick="imagePopDown()">close</button>
+</div>
+ 
+   
 </body>
 </html>
