@@ -1,0 +1,418 @@
+* {
+    box-sizing: border-box;
+}
+
+html{
+	font-family: 'Roboto', sans-serif;
+	font-size:4vw;
+	width: 100%;
+	height: 100%;
+	margin: 0;
+    max-width: 700px;
+    margin: 0 auto;
+    background: #eee; /* Fills the page */
+    position: relative;
+}
+body{
+	background-color: #F5F6FA;
+    font-size: 100%;
+}
+@media only screen and (min-width: 360px) {
+    html, body {
+        font-size: 100%;
+    }
+}
+h1{
+	font-family: 'Roboto', sans-serif;
+	font-size:1.625em;
+	font-weight: normal;
+	color: white;
+}
+
+button {
+	border:none;
+}
+a {
+	text-decoration: none;
+}
+
+.hidden {
+    display: none;
+}
+
+#fixed-header {
+    position: fixed;
+	top: 0;
+	margin: 0 auto;
+    width: 100%;
+    height: 100%;
+    min-height: 68px;
+    max-width: 700px;
+	background-color: #58C3B7;
+	box-shadow: 0 2px 5px rgba(0,0,0,.26);
+    z-index: 3;
+    overflow: auto;
+    transition: height 0.5s;
+}
+
+#playlist-container{
+    display:block;
+    position:absolute;
+    bottom: 0px;
+    width: 100%;
+    height: 100%;
+}
+#close-btn {
+	display: block;
+    position: fixed;
+    top: 0;
+    right: 0px;
+	padding: 0;
+    margin: 10px;
+	background-color: Transparent;
+    font-size: 1.750em!important;
+	color: white;
+    opacity: 0.5;
+    z-index: 3;
+}
+#playlist-title{
+    display: block;
+    position:fixed;
+    top: 0px;
+    width: 100%;
+    height:20%;
+    margin:0;
+    padding: 16px;
+    font-size: 2.8em;
+    color:white;
+    background-color: #58C3B7;
+    text-align: center;
+    z-index: 3;
+}
+
+#playlist{
+    display:block;
+    position:relative;
+    top:20%;
+    margin: 10px 16px 120px;
+}
+.playlist-item{
+    position:relative;
+    display: block;
+    margin: 0;
+    width: 100%;
+    height: 70px;
+}
+.playlist-item *{
+    display: inline-block;
+    margin: 0;
+ }
+.playlist-item p{
+    position: relative;
+    top: 6px;
+    right: 70%;
+    float: right;
+    color:#8bede2;
+    font-size: 1.375em; 
+    text-align: right;
+}
+.playlist-item.active p{
+    color:white;
+}
+.playlist-item.active div.playlist-circle{
+    background-color:white;
+    box-shadow: 0px 0px 0px 8px rgba(255,255,255,.2);
+}
+.playlist-circle{
+    position:absolute;
+    left:35%;
+    border-radius: 20px;
+    width:11vw;
+    max-width: 40px;
+    height:11vw;
+    max-height: 40px;
+    background-color: #8bede2;
+}
+.playlist-line{
+    position:absolute;
+    top:20px;
+    left:35%;
+    transform: translateX(calc(-5px + 5.5vw));
+    border-radius: 20px;
+    width:10px;
+    height:350px; /*number of places x 70px*/
+    background-color: #65cec2;
+}
+@media only screen and (min-width: 364px) {
+    .playlist-line {
+        transform: translateX(calc(-5px + 20px));
+    }
+}
+.playlist-dot{
+    position:absolute;
+    top:357px; /*(number of places x 70px) - 13px*/
+    left:35%;
+    transform: translateX(calc(-13px + 5.5vw));
+    border-radius: 20px;
+    width:26px;
+    height:26px;
+    background-color: #65cec2;
+}
+@media only screen and (min-width: 364px) {
+    .playlist-dot {
+        transform: translateX(calc(-13px + 20px));
+    }
+}
+.playlist-emoji{
+    position: relative;
+    left: 50%;
+    top:-16px;
+    font-size: 3.125em;
+    text-align: left;
+    font-family: "Noto Color Emoji", "Apple Color Emoji", "Segoe UI Emoji", Times, Symbola, Aegyptus, Code2000, Code2001, Code2002, Musica, serif, LastResort;
+}
+#start-btn{
+    display: block;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    height: 12%;
+    background-color: #3fa397;
+    color: white;
+    font-size: 1.2em;
+    text-align: center;
+    padding: 10px;
+}
+#title-container{
+    position:absolute;
+    display:none;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+    max-height: 85px;
+}
+.title {
+    display: inline-block;
+	margin: 0 0 0 16px;
+    position: absolute;
+    top: 50%;
+    left:0;
+    transform: translateY(-50%);
+}
+
+#menu-btn {
+	display: inline-block;
+    bottom: 0;
+	padding: 0;
+    margin-bottom: -6px;
+	background-color: Transparent;
+    font-size: 1.375em!important;
+	color: white;
+    opacity: 0.5;
+}
+#title-emoji{
+    display: inline-block;
+    float:right;
+    margin: 0 16px 0 0;
+    position: absolute;
+    top: 50%;
+    right:0;
+    transform: translateY(-50%);
+    font-size: 2.813em;
+    font-family: "Noto Color Emoji", "Apple Color Emoji", "Segoe UI Emoji", Times, Symbola, Aegyptus, Code2000, Code2001, Code2002, Musica, serif, LastResort;
+}
+
+
+.inline-block {
+    display: inline-block;
+}
+
+#place-box {
+    background-color: white;
+    box-shadow: 0px 1px 4px rgba(0, 0, 0, .6);
+    position: absolute;
+	bottom: 0px;
+	padding: 0px;
+	margin: 0 3%;
+    width:94%;
+    height: 50%;
+	z-index: 1;
+    overflow: hidden;
+}
+
+#place-box-border{
+    display: block;
+    height: 8px;
+    background-color: #58C3B7;
+}
+#place-title {
+    display: block;
+    position:relative;
+    margin: 10px 0;
+    top: 0;
+    height: 30px;
+    font-size: 1.625em;
+    color:dimgray;
+    text-align: center;
+}
+
+#place-dots-container{
+    position: relative;
+    display: block;
+    height: 8px;
+    width: 100px;
+    margin: 0 auto 4px auto;
+    text-align: center;
+}
+.place-dot{
+    display: none;
+    height:6px;
+    width:6px;
+    border-radius: 3px;
+    margin: 0px;
+    background-color:lightgrey;
+    vertical-align:middle;
+    transform: translateY(-8px);
+}
+.place-dot.show{
+    display: inline-block;
+}
+.place-dot.active{
+    background-color: #58C3B7;
+}
+.place-dot.small{
+    width: 4px;
+    height: 4px;
+}
+.place-dot.smaller{
+    width: 3px;
+    height: 3px;
+}
+.place-dot.hidden{
+    display: none;
+}
+#place-line {
+    display: block;
+    width: 80%;
+    border-top: solid;
+    border-width: 1px;
+    border-color: #58C3B7;    
+}
+
+#place-info {
+    display: inline-block;
+    position:relative;
+    margin: 16px 0 0 10%;
+    font-size: 0.875em;
+    color:gray;
+    width: 60%;
+    height: 75px;
+    text-align: justify;
+}
+#go-btn {
+    display: inline-block;
+    position: relative;
+    float:right;
+    background-color: #2D3A4B;
+	color: white;
+    height: 50px;
+    width: 50px;
+    border-radius: 100%;
+    text-align:center;
+    padding: 5px;
+    margin: 16px 10% 0 0;
+    /*box-shadow: 0px 1px 3px rgba(0, 0, 0, .5);*/
+}
+
+#go-icon{
+    display: inline-block;
+    position:absolute;
+    top: 5px;
+    margin: 0px;
+    font-size: 1em;
+}
+
+.icon-text{
+    display: inline-block;
+    position:absolute;
+    bottom: 5px;
+    font-size: 1em;
+}
+
+#place-image img{
+    display: block;
+    position: absolute;
+    top: 160px;
+    width: 95%;
+    height: auto;
+    margin: 16px 2.5% 0 2.5%;
+}
+
+#place-drag-icon {
+	display: inline-block;
+    top: -7px;
+	padding: 0;
+    margin: 0px;
+	background-color: Transparent;
+    font-size: 1.375em!important;
+	color: white;
+    opacity: 0.5;
+}
+#img-popup {
+    display: none;
+    position: fixed;
+    height: 100%;
+    width: 100%;
+    background-color: rgba(0,0,0,0.75);
+    z-index: 4;
+}
+#img-popup img{
+    width: 90%;
+    height: auto;
+}
+#img-close-btn{
+    display: block;
+    position: fixed;
+    top: 0;
+    right: 0px;
+	padding: 0;
+    margin: 10px;
+	background-color: Transparent;
+    font-size: 1.750em!important;
+	color: white;
+    opacity: 0.5;
+    z-index: 3;
+}
+.mapboxgl-ctrl-bottom-left{
+    opacity: 0.8;
+    position:fixed;
+    top:12%;
+    z-index: 0;
+}
+.mapboxgl-ctrl-bottom-right{
+    opacity: 0.7;
+    position:fixed;
+    top:12%;
+    z-index: 0;
+}
+
+/*--------------*/
+.centered-x {
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+    }
+
+.centered-y {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+    }
+
+.centered {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
+/*--------------*/
