@@ -5,11 +5,8 @@
 	<head>
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
-	  <link rel="stylesheet" href="css/mapViewStyle7.css">
+	  <link rel="stylesheet" href="css/mapViewStyle11.css">
 	  
-	 <!--  <link rel="stylesheet" href="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css"><!-- POPUP -->  
-	 <!--  <script src="https://code.jquery.com/jquery-1.11.3.min.js"></script> <!-- POPUP -->  
-	 <!--  <script src="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js" ></script> <!-- POPUP -->
 	  <script src="https://hammerjs.github.io/dist/hammer.js"></script>
 	  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 	  <script src="https://hammerjs.github.io/dist/hammer.js"></script>
@@ -21,14 +18,17 @@
 	        body { margin:0; padding:0; }
 	        #map { position:absolute; top:0; bottom:0; width:100%; }
 	    </style>
-	</head>
 
 <body>
+<script>
+	var LocationName = "${param.location}";
+	var DisplayName = "${param.location}";
+</script>
 
 <% 
-// String LocationName = (String)session.getAttribute("Location");
-String LocationName = (String)session.getAttribute("Location");
-	
+
+String LocationName = "Downtown";
+
 	//////////////////////////////////////////////////////////////////////////
 	//////////////////////// PULLING DATA FROM MYSQL /////////////////////////
 	//////////////////////////////////////////////////////////////////////////
@@ -61,8 +61,6 @@ String LocationName = (String)session.getAttribute("Location");
 %>	
 
 <script>
-var LocationName = "<%=LocationName%>";
-var DisplayName = "<%=LocationName%>";
 
 var index = 0;
 var hasStarted = false;
@@ -105,23 +103,29 @@ var hasStarted = false;
 
 <!-- ////////////// HEADER \\\\\\\\\\\\\\-->
 	<header id="fixed-header">
-	       <div id="playlist-container" class="hidden">
-          <button id="close-btn" class="material-icons" onclick="collapse()">close</button>
+	  <div id="playlist-container" class="hidden">
           <div id="playlist-title"></div>
+          <button id="close-btn" class="material-icons" onclick="collapse()">close</button>
           <div id="playlist">
               <div class="playlist-line"></div>
               <div class="playlist-dot"></div>
              
-           <script> //////// CREATING PLAYLIST ON LOOP ///////
+           <script>
+           //// Fixing playlist-line
+           var height = totalSpotCount * 70;
+           var top = height - 13;
+           document.getElementsByClassName("playlist-line")[0].style.height = height + "px";
+           document.getElementsByClassName("playlist-dot")[0].style.top = height + "px";
+           
+           
+           //////// CREATING PLAYLIST ON LOOP ///////
            		var toAdd = document.createDocumentFragment();
 				for (var i = 1; i <= totalSpotCount; i++) {
 				  	// Mother div
 					var item = document.createElement('div');
 				   item.id = 'p'+i;
-					  if (i == 1)
-					   	item.className = 'playlist-item active';
-					  else
-						item.className = 'playlist-item';
+			
+			       item.className = 'playlist-item';
 					  
 				  item.onclick = function() {
 					  onClick(this);
@@ -148,7 +152,9 @@ var hasStarted = false;
 
            </script>  
               
-          </div>          
+          </div>
+          
+          <div id="start-btn" onclick="startGuide()"> <p>START EXPLORING!</p></div>         
       </div>
       
       
@@ -162,10 +168,15 @@ var hasStarted = false;
 
 <div id='map'></div>
 <script>
+
+////////////////////////////////////////////////////////////////////////
+////////////////////////////LOADING MAP ///////////////////////////////
+////////////////////////////////////////////////////////////////////////
+
 mapboxgl.accessToken = 'pk.eyJ1IjoiaGFuc2VsbWFwcyIsImEiOiJjajQ2bW15eWYwM2FtMnFsZGZranBhemNhIn0.97DqglQK1egBqDvKHYN94A';
 var map = new mapboxgl.Map({
     container: 'map', // container id
-    style: 'mapbox://styles/mapbox/streets-v9', //stylesheet location
+    style: 'mapbox://styles/hanselmaps/cj6i2oir54y382rs7r9ahn5lo', //stylesheet location
     center: [-118.369427, 34.036543], // starting position
     zoom: 9 // starting zoom
 });
@@ -265,25 +276,41 @@ function loadIcons() {
     
 }
 
-function showIcons(){
-	  map.on('load', loadIcons());
-}
-setTimeout(showIcons, 3000);
 </script>
 
 <!--------------- CARD DECLARATION --------------->
 
  <div id="place-box">
+ 	<div id="touchable-area">
         <div id="place-box-border">
             <button id="place-drag-icon" class=" centered-x material-icons">remove</button>
         </div>
         <div id="place-title" class="centered-x"></div>
+          
+        <div id="place-dots-container">
+          <script> //////// CREATING DOTS ON LOOP ///////
+           	var toAddDot = document.createDocumentFragment();
+			for (var i = 1; i <= totalSpotCount; i++) {
+				  	// Mother div
+				   var dotItem = document.createElement('div');
+				   dotItem.id = 'd'+i;
+				   dotItem.className = 'place-dot hidden';
+					  
+				   toAddDot.appendChild(dotItem);
+				}
+				document.getElementById('place-dots-container').appendChild(toAddDot);
+         </script>    
+      </div>    
+   
         <div id="place-line" class="centered-x"></div>
         <div id="place-info"></div>
-        <div id="go-btn">
+        <div id="go-btn" onclick="navigate()">
             <div id="go-icon" class="material-icons centered-x">navigation</div>
             <div class="icon-text centered-x">GO!</div>
         </div>
+   
+		
+     </div>
         <div id="place-image" onclick="imagePopUp()">
 			    <img id="image-link">        	
         </div>
@@ -292,10 +319,43 @@ setTimeout(showIcons, 3000);
   
   
  <script> 
+ 
+	////////////////////////////////////////////////////////////////////////
+	//////////////////// SETTING UP DOTS /////////////////////////
+	////////////////////////////////////////////////////////////////////////
+	
+	 var centerDot = 1;
+	 var activeDot = 0;
+	 function moveDots(){
+	     var dots = document.getElementsByClassName("place-dot");
+	     
+	     for (var i = 0; i < totalSpotCount; i++)
+	    	 dots[i].className = "place-dot hidden";
+	     
+	     activeDot = index ;
+	     
+	     if (activeDot > 0 && activeDot < totalSpotCount - 1)
+	         centerDot = activeDot;
+	     else if (activeDot == 0)
+	         centerDot = activeDot + 1;
+	     else if (activeDot == totalSpotCount - 1)
+	         centerDot = activeDot - 1;
+	     
+	     try{dots[centerDot-3].className = "place-dot show smaller";} catch(err){}
+	     try{dots[centerDot-2].className = "place-dot show small";} catch(err){}
+	     try{dots[centerDot-1].className = "place-dot show";} catch(err){}
+	     try{dots[centerDot].className = "place-dot show";} catch(err){}
+	     try{dots[centerDot+1].className = "place-dot show";} catch(err){}
+	     try{dots[centerDot+2].className = "place-dot show small";} catch(err){}
+	     try{dots[centerDot+3].className = "place-dot show smaller";} catch(err){}    
+	
+	     try{dots[activeDot].className = "place-dot show active";} catch(err){}
+	 }
+	 
 	////////////////////////////////////////////////////////////////////////
 	//////////////////// SETTING UP TOUCH RESPONSE /////////////////////////
 	////////////////////////////////////////////////////////////////////////
-		var myElement = document.getElementById('place-title');
+		var myElement = document.getElementById('touchable-area');
 		var mc = new Hammer(myElement);
 		mc.get('swipe').set({ threshold: 10});
 		
@@ -306,31 +366,37 @@ setTimeout(showIcons, 3000);
 	
  	function goToIndex() {
 
- 		map.getSource('test2').setData({"geometry": {"type": "Point",
-			"coordinates": [xValues[index], yValues[index]] }, "type": "Feature", "properties": {"title":placeIDs[index],}});
-		
- 		if (!hasStarted)
+
+ 		if (!hasStarted) {
+ 			loadIcons();
+			document.getElementById("close-btn").style.display = "block";
 			screenFly();
- 		else {
+			hasStarted = true;
+ 		} else {
 	 		map.flyTo({
 		        "center": [xValues[index], yValues[index] - isMaximized*delta],
 		        "zoom": 15.3,
 		        "speed": 1
 		 	});
  		}
+ 		
+ 		map.getSource('test2').setData({"geometry": {"type": "Point",
+			"coordinates": [xValues[index], yValues[index]] }, "type": "Feature", "properties": {"title":placeIDs[index],}});
+		
 		document.getElementById('place-title').innerHTML = placeNames[index];
 		document.getElementById('place-info').innerHTML = placeDescriptions[index];
 		document.getElementById('title-emoji').innerHTML = emojis[index];
 		document.getElementById('activity').innerHTML = placeActivities[index];
 		document.getElementById('image-link').src = "/Hansel_Test/placeImages/" + LocationName + "/" + images[index] + ".png";
-		document.getElementById('img-popup').src = "/Hansel_Test/placeImages/" + LocationName + "/" + images[index] + ".png";
-		document.getElementById('img-popup').src = "/Hansel_Test/placeImages/" + LocationName + "/" + images[index] + ".png";
+		document.getElementById('img-popup-link').src = "/Hansel_Test/placeImages/" + LocationName + "/" + images[index] + ".png";
 
 		
 		var newIDValue = index + 1;
 		var newID = "p" + newIDValue;
-		document.getElementsByClassName("active")[0].classList.remove("active");
+		try {document.getElementsByClassName("active")[0].classList.remove("active");} catch(err){}
 		document.getElementById(newID).classList.add("active");
+		
+		moveDots();
  	}
 	
  	// going to next stop
@@ -360,7 +426,6 @@ setTimeout(showIcons, 3000);
 	        "zoom": 14.75,
 	        "speed": 0.65
 	 	});
-		hasStarted = true;
 	}
 	
 	//SWIPE UP/DOWN
@@ -452,24 +517,65 @@ function updateIndex(place) {
 }
 
 function imagePopUp(){
-	document.getElementById("img-popup").src = "/Hansel_Test/placeImages/" + LocationName + "/" + images[index] + ".png";
     document.getElementById("img-popup").style.display = "block";
+    document.getElementById("image-link").style.display = "none";
 }
 function imagePopDown(){
-	document.getElementById("img-popup").src = "/Hansel_Test/placeImages/" + LocationName + "/" + images[index] + ".png";
     document.getElementById("img-popup").style.display = "none";
-    
+    document.getElementById("image-link").style.display = "block";   
 }
-		////////////////////////////////////////////////////////////////////////
-		//////////////////////////// LOADING MAP ///////////////////////////////
-		////////////////////////////////////////////////////////////////////////
-		//map.on('load', () => {});
+
+function startGuide() {
+	index = 0;
+	document.getElementById("start-btn").style.display = "none";
+	goToIndex();
+	collapse();
+}
+
+function navigate() {
+	// Forming link
+	var link = "https://www.google.com/maps?saddr=My+Location&daddr=" + yValues[index] + "," + xValues[index] + "&dirflg=w";
+	
+	if( (navigator.platform.indexOf("iPhone") != -1) 
+        || (navigator.platform.indexOf("iPod") != -1)
+        || (navigator.platform.indexOf("iPad") != -1))
+         window.open(link);
+    else
+         window.open(link);
+	
+}
+
+//////////////////////////////////////////////////////////////////////////
+////////////////// CLICKING ON VARIOUS LOCATIONS /////////////////////////
+//////////////////////////////////////////////////////////////////////////
+map.on('click', function (e) {
+    var features = map.queryRenderedFeatures(e.point, {layers: ['points']});
+     if (!features.length) {
+		   $('#place-box').animate({height: '85px'}); 
+		   map.flyTo({
+  		        "center": [xValues[index], yValues[index]],
+  		        "zoom": 15.3,
+  		        "speed": 1
+  		 	});
+		   isMaximized = false;
+     } else {
+    		index = features[0].properties.title - 1;
+    		goToIndex();
+    		 $('#place-box').animate({height: '60%'});
+  			 map.flyTo({
+  		        "center": [xValues[index], yValues[index] - delta],
+  		        "zoom": 15.3,
+  		        "speed": 1
+  		 	});
+  			 isMaximized = true;   
+  	}
+});
 </script> 
 
 <div id="img-popup" onclick="imagePopDown()">
         <button id="img-close-btn" class="material-icons" onclick="imagePopDown()">close</button>
+        <img id="img-popup-link" class="centered">
 </div>
- 
-   
+  
 </body>
 </html>
