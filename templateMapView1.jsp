@@ -3,35 +3,39 @@
 	<!DOCTYPE html>
 <html>
 	<head>
-	<meta name="viewport" content="width=device-width, initial-scale=1">
+	  <meta name="viewport" content="width=device-width, initial-scale=1">
 	  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
-	  <link rel="stylesheet" href="css/mapViewStyle11.css">
-	  
+	  <link rel="stylesheet" href="css/mapViewStyle11.css">	  
 	  <script src="https://hammerjs.github.io/dist/hammer.js"></script>
 	  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 	  <script src="https://hammerjs.github.io/dist/hammer.js"></script>
 	  <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.39.1/mapbox-gl.js'></script>
 	  <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.39.1/mapbox-gl.css' rel='stylesheet' />
 	  
-	  
 	    <style>
 	        body { margin:0; padding:0; }
 	        #map { position:absolute; top:0; bottom:0; width:100%; }
 	    </style>
-
+	  
 <body>
 <script>
+
+	//////////////////////////////////////////////////////////////////////////
+	///////////////// CHANGING LOCATION BASED ON FILE INPUT //////////////////
+	//////////////////////////////////////////////////////////////////////////
 	var LocationName = "${param.location}";
-	var DisplayName = "${param.location}";
+	var DisplayName = "${param.displayName}";
+	
 </script>
 
-<% 
-
-String LocationName = "Downtown";
+<%@ page import = "java.util.*" import="java.io.*" %>
+<%
+String LocationName = (String)request.getParameter("location");
 
 	//////////////////////////////////////////////////////////////////////////
 	//////////////////////// PULLING DATA FROM MYSQL /////////////////////////
 	//////////////////////////////////////////////////////////////////////////
+
 		Statement statement = null;
 		Statement statement2 = null;
 		PreparedStatement preparedStatement = null;
@@ -56,12 +60,9 @@ String LocationName = "Downtown";
 		while(resultSet2.next()){
 		rowCount = resultSet2.getString("count(*)");
 		} resultSet2.close();
-	
-	//////////////////////////////////////////////////////////////////////////
 %>	
 
 <script>
-
 var index = 0;
 var hasStarted = false;
 	//////////////////////////////////////////////////////////////////////////
@@ -169,22 +170,24 @@ var hasStarted = false;
 <div id='map'></div>
 <script>
 
-////////////////////////////////////////////////////////////////////////
-////////////////////////////LOADING MAP ///////////////////////////////
-////////////////////////////////////////////////////////////////////////
+	////////////////////////////////////////////////////////////////////////
+	//////////////////////////// LOADING MAP ///////////////////////////////
+	////////////////////////////////////////////////////////////////////////
 
-mapboxgl.accessToken = 'pk.eyJ1IjoiaGFuc2VsbWFwcyIsImEiOiJjajQ2bW15eWYwM2FtMnFsZGZranBhemNhIn0.97DqglQK1egBqDvKHYN94A';
-var map = new mapboxgl.Map({
-    container: 'map', // container id
-    style: 'mapbox://styles/hanselmaps/cj6i2oir54y382rs7r9ahn5lo', //stylesheet location
-    center: [-118.369427, 34.036543], // starting position
-    zoom: 9 // starting zoom
-});
-map.on('load', () => {});
+	mapboxgl.accessToken = 'pk.eyJ1IjoiaGFuc2VsbWFwcyIsImEiOiJjajQ2bW15eWYwM2FtMnFsZGZranBhemNhIn0.97DqglQK1egBqDvKHYN94A';
+	var map = new mapboxgl.Map({
+	    container: 'map', // container id
+	    style: 'mapbox://styles/hanselmaps/cj6i2oir54y382rs7r9ahn5lo', //stylesheet location
+	    center: [-118.369427, 34.036543], // starting position
+	    zoom: 9 // starting zoom
+	});
+	map.on('load', () => {});
 
-//////////////////////////////////////////////////////////////////////////
-////////////////////////// PLOTTING ALL POINTS ///////////////////////////
-//////////////////////////////////////////////////////////////////////////
+	
+	//////////////////////////////////////////////////////////////////////////
+	////////////////////////// PLOTTING ALL POINTS ///////////////////////////
+	//////////////////////////////////////////////////////////////////////////
+	
 	var datatext = {};
 	datatext['type'] = "FeatureCollection";
 	datatext['features'] = [];
@@ -206,9 +209,10 @@ map.on('load', () => {});
 		datatext['features'].push(newFeature);
 	}
 
-//////////////////////////////////////////////////////////////////////////
-////////////////////////// CURRENT LOCATION PT ///////////////////////////
-//////////////////////////////////////////////////////////////////////////
+	//////////////////////////////////////////////////////////////////////////
+	////////////////////////// CURRENT LOCATION PT ///////////////////////////
+	//////////////////////////////////////////////////////////////////////////
+	
 	var datatext2 ={
 	        "type": "FeatureCollection",
 	        "features": [{
@@ -224,6 +228,7 @@ map.on('load', () => {});
 //////////////////////////////////////////////////////////////////////////
 ////////////////////// LOADING ALL ATTRACTIONS ///////////////////////////
 //////////////////////////////////////////////////////////////////////////
+
 function loadIcons() {
 	map.addSource("test", {
         "type": "geojson",
@@ -320,62 +325,67 @@ function loadIcons() {
   
  <script> 
  
-	////////////////////////////////////////////////////////////////////////
-	//////////////////// SETTING UP DOTS /////////////////////////
-	////////////////////////////////////////////////////////////////////////
-	
-	 var centerDot = 1;
-	 var activeDot = 0;
-	 function moveDots(){
-	     var dots = document.getElementsByClassName("place-dot");
-	     
-	     for (var i = 0; i < totalSpotCount; i++)
-	    	 dots[i].className = "place-dot hidden";
-	     
-	     activeDot = index ;
-	     
-	     if (activeDot > 0 && activeDot < totalSpotCount - 1)
-	         centerDot = activeDot;
-	     else if (activeDot == 0)
-	         centerDot = activeDot + 1;
-	     else if (activeDot == totalSpotCount - 1)
-	         centerDot = activeDot - 1;
-	     
-	     try{dots[centerDot-3].className = "place-dot show smaller";} catch(err){}
-	     try{dots[centerDot-2].className = "place-dot show small";} catch(err){}
-	     try{dots[centerDot-1].className = "place-dot show";} catch(err){}
-	     try{dots[centerDot].className = "place-dot show";} catch(err){}
-	     try{dots[centerDot+1].className = "place-dot show";} catch(err){}
-	     try{dots[centerDot+2].className = "place-dot show small";} catch(err){}
-	     try{dots[centerDot+3].className = "place-dot show smaller";} catch(err){}    
-	
-	     try{dots[activeDot].className = "place-dot show active";} catch(err){}
-	 }
-	 
-	////////////////////////////////////////////////////////////////////////
-	//////////////////// SETTING UP TOUCH RESPONSE /////////////////////////
-	////////////////////////////////////////////////////////////////////////
-		var myElement = document.getElementById('touchable-area');
-		var mc = new Hammer(myElement);
-		mc.get('swipe').set({ threshold: 10});
-		
+////////////////////////////////////////////////////////////////////////
+/////////////////////////// SETTING UP DOTS ////////////////////////////
+////////////////////////////////////////////////////////////////////////
 
-	var index = 0;
-	var delta = 0.002;
-	var isMaximized = false;
+ var centerDot = 1;
+ var activeDot = 0;
+ function moveDots(){
+     var dots = document.getElementsByClassName("place-dot");
+     
+     for (var i = 0; i < totalSpotCount; i++)
+    	 dots[i].className = "place-dot hidden";
+     
+     activeDot = index ;
+     
+     if (activeDot > 0 && activeDot < totalSpotCount - 1)
+         centerDot = activeDot;
+     else if (activeDot == 0)
+         centerDot = activeDot + 1;
+     else if (activeDot == totalSpotCount - 1)
+         centerDot = activeDot - 1;
+     
+     try{dots[centerDot-3].className = "place-dot show smaller";} catch(err){}
+     try{dots[centerDot-2].className = "place-dot show small";} catch(err){}
+     try{dots[centerDot-1].className = "place-dot show";} catch(err){}
+     try{dots[centerDot].className = "place-dot show";} catch(err){}
+     try{dots[centerDot+1].className = "place-dot show";} catch(err){}
+     try{dots[centerDot+2].className = "place-dot show small";} catch(err){}
+     try{dots[centerDot+3].className = "place-dot show smaller";} catch(err){}    
+
+     try{dots[activeDot].className = "place-dot show active";} catch(err){}
+ }
+ 
+////////////////////////////////////////////////////////////////////////
+//////////////////// SETTING UP TOUCH RESPONSE /////////////////////////
+////////////////////////////////////////////////////////////////////////
 	
+var myElement = document.getElementById('touchable-area');
+var mc = new Hammer(myElement);
+mc.get('swipe').set({ threshold: 10});	
+
+var index = 0;
+var delta = 0.002;
+var isMaximized = false;
+	
+
+////////////////////////////////////////////////////////////////////////
+//////////////////////////// CHANGING INDEX ////////////////////////////
+////////////////////////////////////////////////////////////////////////
+
  	function goToIndex() {
-
 
  		if (!hasStarted) {
  			loadIcons();
 			document.getElementById("close-btn").style.display = "block";
+			document.getElementById("start-btn").style.display = "none";
 			screenFly();
 			hasStarted = true;
  		} else {
 	 		map.flyTo({
 		        "center": [xValues[index], yValues[index] - isMaximized*delta],
-		        "zoom": 15.3,
+		        "zoom": 15.5,
 		        "speed": 1
 		 	});
  		}
@@ -408,6 +418,7 @@ function loadIcons() {
  			return;
  	}
  	
+ 	// going to previous stop
  	function goToPrevStop() {	
  		if (index > 0) {
 			index--; 
@@ -417,9 +428,15 @@ function loadIcons() {
  	}
 
 		
-		mc.on("swipeleft", goToNextStop);
-		mc.on("swiperight", goToPrevStop);
+	mc.on("swipeleft", goToNextStop);
+	mc.on("swiperight", goToPrevStop);
 		
+	
+
+////////////////////////////////////////////////////////////////////////
+////////////////////////////// SCREEN FLY //////////////////////////////
+////////////////////////////////////////////////////////////////////////
+
 	function screenFly() {	
 		map.flyTo({
 	        "center": [xValues[index], yValues[index]],
@@ -428,20 +445,21 @@ function loadIcons() {
 	 	});
 	}
 	
-	//SWIPE UP/DOWN
+
+////////////////////////////////////////////////////////////////////////
+///////////////////////// SWIPE UP AND DOWN ////////////////////////////
+////////////////////////////////////////////////////////////////////////
 	
 	var card = document.getElementById('place-box');
-	//create a simple instance
-	//by default, it only adds horizontal recognizers
 	var cardVerticalSwipe = new Hammer(card);
-	
-	//let the pan gesture support all directions.
-	//this will block the vertical scrolling on a touch-device while on the element
 	cardVerticalSwipe.get('pan').set({direction: Hammer.DIRECTION_ALL });
 	
 	
 	
-	// MAXIMIZE/MINIMIZE WINDOW
+
+////////////////////////////////////////////////////////////////////////
+//////////////////// CARD MAXIMIZE AND MINIMIZE ////////////////////////
+////////////////////////////////////////////////////////////////////////
 	   $(document).ready(function() {
 			$('#place-box').animate({height: '85px'}); 
 
@@ -554,7 +572,7 @@ map.on('click', function (e) {
 		   $('#place-box').animate({height: '85px'}); 
 		   map.flyTo({
   		        "center": [xValues[index], yValues[index]],
-  		        "zoom": 15.3,
+  		        "zoom": 15.5,
   		        "speed": 1
   		 	});
 		   isMaximized = false;
@@ -564,7 +582,7 @@ map.on('click', function (e) {
     		 $('#place-box').animate({height: '60%'});
   			 map.flyTo({
   		        "center": [xValues[index], yValues[index] - delta],
-  		        "zoom": 15.3,
+  		        "zoom": 15.5,
   		        "speed": 1
   		 	});
   			 isMaximized = true;   
