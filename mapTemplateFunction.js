@@ -58,8 +58,6 @@ function imagePopDown(){
 	document.getElementById("image-link").style.display = "block";   
 }
 
-
-
 function navigate() {
 	// Forming link
 	var link = "https://www.google.com/maps?saddr=My+Location&daddr=" + yValues[index] + "," + xValues[index] + "&dirflg=w";
