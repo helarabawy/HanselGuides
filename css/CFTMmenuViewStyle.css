@@ -1,0 +1,163 @@
+* {
+    box-sizing: border-box;
+      -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+     -khtml-user-select: none; /* Konqueror HTML */
+       -moz-user-select: none; /* Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+            user-select: none; /* Non-prefixed version, currently
+                                  supported by Chrome and Opera */
+}
+
+html{
+	font-family: 'Roboto', sans-serif;
+	font-size:4vw;
+	width: 100%;
+	height: 100%;
+	margin: 0;
+    max-width: 700px;
+    margin: 0 auto;
+    background: #eee; /* Fills the page */
+    position: relative;
+}
+body{
+    position: relative;
+	background-color: #F5F6FA;
+    font-size: 100%;
+    height:100%;
+    width:100%;
+    max-width: 700px;
+    margin: 0;
+    padding: 0;
+}
+
+@media only screen and (min-width: 360px) {
+    html, body {
+        font-size: 100%;
+    }
+}
+h1{
+	font-family: 'Roboto', sans-serif;
+	font-size:3em;
+	font-weight: normal;
+	color: white;
+    margin: 0;
+}
+
+button {
+	border:none;
+}
+a {
+	text-decoration: none;
+}
+#fixed-header {
+    display: block;
+    position:fixed;
+    top: 0px;
+    height: 20%;
+    width: 100%;
+    max-width: 700px;
+    z-index: 1;
+    background-color: #00ccb4;
+    box-shadow: 0 2px 5px rgba(0,0,0,.26);
+}
+#nav-btn {
+	display: inline-block;
+	margin: 16px 0 0 16px;
+	padding: 0;
+	background-color: Transparent;
+	outline: none;
+}
+.nav-icon {
+    font-size: 1.9em!important;
+    color: white;
+}
+.title {
+    display: inline-block;
+    
+}
+#main-container{
+    display: block;
+    position:relative;
+    top:20%;
+    height: 100%;
+}
+form {
+    display: block;
+    position: relative;
+    height: 25%;
+    width: 100%;
+}
+.btn {
+    display:block;
+    position: relative;
+    height:100%;
+    width:100%;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-color: black;
+}
+.inline-block {
+    display: inline-block;
+}
+.black-rectangle{
+    display: inline-block;
+    position: absolute;
+    top: calc(50% - 20px);
+	height: 0;
+	width: auto;
+    font-size: 2.3em;
+    color: rgba(0,0,0,0);
+}
+.black-rectangle.L{
+    left: 0;
+    border-top: 50px solid rgba(0,0,0,0.7);
+	border-right: 20px solid transparent;
+}
+.black-rectangle.R{
+    right: 0;
+    border-bottom: 50px solid rgba(0,0,0,0.7);
+	border-left: 20px solid transparent;
+}
+.btn img {
+    width: 100%;
+    margin: 0;
+    opacity: 1;
+    flex-shrink: 0;
+    min-width: 100%;
+    min-height: 100%
+}
+.btn p{
+    position:absolute;
+    color: white;
+    font-size: 2em;
+    margin: 5px;
+}
+.btn p.L{
+    left: 0px;
+}
+.btn p.R{
+    right: 0px;
+}
+
+/*--------------*/
+.centered-x {
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+    }
+
+.centered-y {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+    }
+
+.centered {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
+/*--------------*/
