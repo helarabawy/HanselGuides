@@ -5,7 +5,7 @@
 	<head>
 	  <meta name="viewport" content="width=device-width, initial-scale=1">
 	  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
-	  <link rel="stylesheet" href="css/mapViewStyle16.css">	  
+	  <link rel="stylesheet" href="css/mapViewStyle23.css">	  
 	  <script src="https://hammerjs.github.io/dist/hammer.js"></script>
 	  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 	  <script type="text/javascript" src="mapTemplateFunction6.js"></script>
@@ -27,8 +27,12 @@
 	//////////////////////////////////////////////////////////////////////////
 	var LocationName = "${param.location}";
 	var DisplayName = "${param.displayName}";
+	var xAverage = 0;
+	var yAverage = 0;
 	
-	</script>
+	
+	
+</script>
 	
 	<%@ page import = "java.util.*" import="java.io.*" %>
 	<%
@@ -76,6 +80,7 @@
 	// Array Declarations
 	var xValues = new Array(totalSpotCount);
 	var yValues = new Array(totalSpotCount);
+	var seqIDs = new Array(totalSpotCount);
 	var placeIDs = new Array(totalSpotCount);
 	var placeNames = new Array(totalSpotCount);
 	var placeDescriptions = new Array(totalSpotCount);
@@ -91,18 +96,25 @@
 	%>
 		xValues[count] = <%=resultSet.getString("x")%>;
 		yValues[count] = <%=resultSet.getString("y")%>;
+		seqIDs[count] = <%=resultSet.getString("seq_id")%>;
 		placeIDs[count] = <%=resultSet.getString("place_id")%>;
 		placeNames[count] = "<%=resultSet.getString("place_name")%>";
 		placeDescriptions[count] = "<%=resultSet.getString("place_description")%>";
 		emojis[count] = "<%=resultSet.getString("place_emoji")%>";
 		placeActivities[count] = "<%=resultSet.getString("place_activity")%>";
-		images[count] = "<%=resultSet.getString("place_image")%>";
+		images[count] = "<%=resultSet.getString("img_url")%>";
 	
+		xAverage += xValues[count];
+		yAverage += yValues[count];
+		
 		count++;  
 	<%
 	}
 	resultSet.close();
 	%>
+	
+	xAverage = xAverage/totalSpotCount;
+	yAverage = yAverage/totalSpotCount;
 </script>
 
 <!-- ////////////// HEADER \\\\\\\\\\\\\\-->
@@ -111,20 +123,20 @@
           <div id="playlist-title"></div>
           <button id="close-btn" class="material-icons" onclick="collapse()">close</button>
           <div id="playlist">
-              <div class="playlist-line"></div>
               <div class="playlist-dot"></div>
              
            <script>
            //// Fixing playlist-line
            var height = totalSpotCount * 70;
-           var top = height - 13;
-           document.getElementsByClassName("playlist-line")[0].style.height = height + "px";
            document.getElementsByClassName("playlist-dot")[0].style.top = height + "px";
            
            
            //////// CREATING PLAYLIST ON LOOP ///////
            		var toAdd = document.createDocumentFragment();
+           		var currentSeqID = seqIDs[0];
+           		var lineLength = 0;
 				for (var i = 1; i <= totalSpotCount; i++) {
+					lineLength++;
 				  	// Mother div
 					var item = document.createElement('div');
 				   item.id = 'p'+i;
@@ -135,15 +147,31 @@
 					  onClick(this);
 				  };
 				  
+				  // Playlist circle
 				   var playlistCircle = document.createElement('div');
 				   playlistCircle.className = 'playlist-circle';
 				   
+				  // Playlist emoji
 				   var playlistEmoji = document.createElement('div');
 				   playlistEmoji.className = 'playlist-emoji';
 				   playlistEmoji.innerHTML = emojis[i - 1];
-				   
+				 
+				  // Playlist activity
 				   var text = document.createElement('p');
 				   text.innerHTML = placeActivities[i - 1];
+				   
+				  // Playlist line(s)
+				  if (seqIDs[i - 1] != currentSeqID || i == totalSpotCount) {
+					  currentSeqID = seqIDs[i - 1];
+					  var playlistLine = document.createElement('div');
+					  playlistLine.className = "playlist-line";
+					  playlistLine.style.height = lineLength * 70;
+					  var firstDotVal = i - lineLength + 1; 
+					  var firstDotId = "p" + firstDotVal;
+					  //document.getElementById(firstDotId).appendChild(playlistLine);
+					  item.appendChild(playlistLine);
+					  lineLength = 0;
+				  }
 				   
 				   item.appendChild(text);
 				   item.appendChild(playlistCircle);
@@ -181,7 +209,7 @@
 	var map = new mapboxgl.Map({
 	    container: 'map', // container id
 	    style: 'mapbox://styles/hanselmaps/cj6i2oir54y382rs7r9ahn5lo', //stylesheet location
-	    center: [-118.369427, 34.036543], // starting position
+	    center: [xAverage, yAverage], // starting position
 	    zoom: 9 // starting zoom
 	});
 	map.on('load', () => {});
@@ -289,7 +317,7 @@
  <div id="place-dots-container" class="centered-x">
      <script>
  	//////////////////////////////////////////////////////////////////////////
- 	//////////////////// CREATING PLAYLIST CIRCLES ON LOOP ///////////////////
+ 	//////////////////////// CREATING CARDS ON LOOP //////////////////////////
  	//////////////////////////////////////////////////////////////////////////
 
         var toAddDot = document.createDocumentFragment();
@@ -333,7 +361,6 @@
 					
 					var goBtn = document.createElement('div');
 					goBtn.className = "go-btn";
-					goBtn.onclick = "navigate()";
 						
 						var nav =  document.createElement('div');
 						nav.className = "go-icon material-icons centered-x";
@@ -347,11 +374,10 @@
 					
 					var placeImage = document.createElement('div');
 					placeImage.className = "place-image";
-					placeImage.onclick = "imagePopUp()"
 							
 						var img =  document.createElement('img');
 						img.className = "image-link";
-						img.src = "/Hansel_Test/placeImages/" + LocationName + "/" + images[i] + ".png";
+						img.src =  images[i];
 						placeImage.appendChild(img);
 				
 				placeBox.appendChild(placeBoxBorder);
@@ -384,7 +410,7 @@
  <script> 
 
  	var index = 0;
-	var delta = 0.002;
+	var delta = 0.0015;
 	var isMaximized = false;
 	
 
@@ -407,14 +433,14 @@
 		        "speed": 1
 		 	});
  		}
- 		
+        $('.place-slider').slick('slickGoTo', index);
+
  		map.getSource('test2').setData({"geometry": {"type": "Point",
 			"coordinates": [xValues[index], yValues[index]] }, "type": "Feature", "properties": {"title":placeIDs[index],}});
 		
 		document.getElementById('title-emoji').innerHTML = emojis[index];
 		document.getElementById('activity').innerHTML = placeActivities[index];
-		document.getElementById('img-popup-link').src = "/Hansel_Test/placeImages/" + LocationName + "/" + images[index] + ".png";
-
+		document.getElementById('img-popup-link').src = images[index];
 		
 		var newIDValue = index + 1;
 		var newID = "p" + newIDValue;
@@ -450,73 +476,32 @@
 	 	});
 	}
 	
-	////////////////////////////////////////////////////////////////////////
-	///////////////////////// CARD VERTICAL MOTION /////////////////////////
-	////////////////////////////////////////////////////////////////////////
-/*
-	var card = document.getElementsByClassName('place-box')[index];
-	var cardVerticalSwipe = new Hammer(card);
-	cardVerticalSwipe.get('pan').set({direction: Hammer.DIRECTION_ALL });
-
-	$(document).ready(function() {
-			$('.place-box').animate({height: '85px'}); 
-
-			mc.on("panup", function(ev) {
-	  			   $('.place-box').animate({height: '60%'});
-		  			 map.flyTo({
-		  		        "center": [xValues[index], yValues[index] - delta],
-		  		        "zoom": 15.3,
-		  		        "speed": 1
-		  		 	});
-		  			 isMaximized = true;
-		    	});
-		   mc.on("pandown", function(ev) {
-	    		   $('.place-box').animate({height: '85px'}); 
-	    		   map.flyTo({
-		  		        "center": [xValues[index], yValues[index]],
-		  		        "zoom": 15.3,
-		  		        "speed": 1
-		  		 	});
-	    		   isMaximized = false;
-		    	});
-		   mc.on("tap", function(ev) {
-			   
-			   if (isMaximized) {
-		    		   $('.place-box').animate({height: '85px'}); 
-		    		   map.flyTo({
-			  		        "center": [xValues[index], yValues[index]],
-			  		        "zoom": 15.3,
-			  		        "speed": 1
-			  		 	});
-			   } else {
-					   $('.place-box').animate({height: '60%'});
-			  			 map.flyTo({
-			  		        "center": [xValues[index], yValues[index] - delta],
-			  		        "zoom": 15.3,
-			  		        "speed": 1
-			  		 	});
-			   }
-			   isMaximized = !isMaximized;
-	    	});
-	    	    
-	});
-*/
 
 function placeBoxDown(){
+    isMaximized = false;
     document.getElementById("place-box-container").style.height = "85px";
     document.getElementById("place-dots-container").style.bottom = "87px";
-    isMaximized = false;
 }
 function placeBoxUp(){
-    document.getElementById("place-box-container").style.height = "50%";
-    document.getElementById("place-dots-container").style.bottom = "calc(50vh + 2px)";
     isMaximized = true;
+    document.getElementById("place-box-container").style.height = "50%";
+    document.getElementById("place-dots-container").style.bottom = "calc(50% + 2px)";
+    map.flyTo({
+	        "center": [xValues[index], yValues[index] - delta],
+	        "zoom": 15.5,
+	        "speed": 1
+	});
 }
 
 function resizeCard() {
-	if (isMaximized)
-		placeBoxDown();
-	else
+	if (isMaximized) {
+			placeBoxDown();
+		    map.flyTo({
+		        "center": [xValues[index], yValues[index]],
+		        "zoom": 15.5,
+		        "speed": 1
+		});
+	} else
 		placeBoxUp();
 }	
 
@@ -527,28 +512,26 @@ function resizeCard() {
 	map.on('click', function (e) {
 	    var features = map.queryRenderedFeatures(e.point, {layers: ['points']});
 	     if (!features.length) {
-	    	 placeBoxDown();
-			   map.flyTo({
-	  		        "center": [xValues[index], yValues[index]],
-	  		        "zoom": 15.5,
-	  		        "speed": 1
-	  		 	});
-			   isMaximized = false;
+	   	 	   placeBoxDown();
 	     } else {
 	    		index = features[0].properties.title - 1;
 	            $('.place-slider').slick('slickGoTo', index);
 	            placeBoxUp();
-	    		goToIndex();
-	  			 map.flyTo({
-	  		        "center": [xValues[index], yValues[index] - delta],
-	  		        "zoom": 15.5,
-	  		        "speed": 1
-	  		 	});
-	  			 isMaximized = true; 
-	  			 
+	    			goToIndex();
+	 
 	  	}
 	});
 	
+	//////////////////////////////////////////////////////////////////////////
+	///////////////////////////// LOCATING USER //////////////////////////////
+	//////////////////////////////////////////////////////////////////////////
+
+	map.addControl(new mapboxgl.GeolocateControl({
+	    positionOptions: {
+	        enableHighAccuracy: true
+	    },
+	    trackUserLocation: true
+	}));
 
 	//////////////////////////////////////////////////////////////////////////
 	////////////////////////// CLICKING PLAYLIST /////////////////////////////
@@ -589,7 +572,7 @@ function resizeCard() {
             centerPadding: '5vw',
             slidesToShow: 1,
             arrows: false,
-            infinite: false
+            infinite: false,
         });
                 
         $('.place-slider').on('beforeChange', function(event, slick, currentSlide, nextSlide){   
@@ -597,6 +580,20 @@ function resizeCard() {
             goToIndex();
         });
         
+        $('.slick-slider').on('click', '.slick-slide', function (e) {
+	        	e.stopPropagation();
+	        	resizeCard();
+	     });
+        
+        $('.slick-slider').on('click', '.go-btn', function (e) {
+	        	e.stopPropagation();
+	        	navigate();
+    		 });
+        
+        $('.slick-slider').on('click', '.place-image', function (e) {
+        	e.stopPropagation();
+        	imagePopUp();
+		 });
     </script>
    
   
