@@ -5,7 +5,7 @@
 	<head>
 	  <meta name="viewport" content="width=device-width, initial-scale=1">
 	  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
-	  <link rel="stylesheet" href="css/mapViewStyle23.css">	  
+	  <link rel="stylesheet" href="css/mapViewStyle25.css">	  
 	  <script src="https://hammerjs.github.io/dist/hammer.js"></script>
 	  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 	  <script type="text/javascript" src="mapTemplateFunction6.js"></script>
@@ -129,12 +129,13 @@
            //// Fixing playlist-line
            var height = totalSpotCount * 70;
            document.getElementsByClassName("playlist-dot")[0].style.top = height + "px";
-           
-           
+	        document.getElementById('playlist-title').innerHTML = DisplayName;
+
            //////// CREATING PLAYLIST ON LOOP ///////
            		var toAdd = document.createDocumentFragment();
            		var currentSeqID = seqIDs[0];
            		var lineLength = 0;
+           		var firstDotId;
 				for (var i = 1; i <= totalSpotCount; i++) {
 					lineLength++;
 				  	// Mother div
@@ -161,14 +162,37 @@
 				   text.innerHTML = placeActivities[i - 1];
 				   
 				  // Playlist line(s)
+				  
 				  if (seqIDs[i - 1] != currentSeqID || i == totalSpotCount) {
 					  currentSeqID = seqIDs[i - 1];
 					  var playlistLine = document.createElement('div');
 					  playlistLine.className = "playlist-line";
-					  playlistLine.style.height = lineLength * 70;
-					  var firstDotVal = i - lineLength + 1; 
-					  var firstDotId = "p" + firstDotVal;
-					  //document.getElementById(firstDotId).appendChild(playlistLine);
+					 
+					  var playlistLineHeight;
+					  var playlistLinePos;
+					  var diff;
+					  
+					  if (lineLength == i)
+						  diff = 13;
+					  else
+						  diff = 0;
+					  
+					  
+					  if (i == totalSpotCount) {
+						  if (currentSeqID != 1) {
+							  playlistLineHeight = (lineLength + 1) * 70;
+							  playlistLinePos = -70 * (lineLength) + 13;
+						  } else {
+						 	playlistLineHeight = (lineLength) * 70;
+						    playlistLinePos = -70 * (lineLength - 1) + 13;
+						  }
+					  } else {
+						  playlistLineHeight = (lineLength - 2) * 70 ;
+						  playlistLinePos = -70 * (lineLength - 1) + 13 ;
+					  }
+						  
+					  playlistLine.style.height = playlistLineHeight + "px";
+					  playlistLine.style.top = playlistLinePos + "px";
 					  item.appendChild(playlistLine);
 					  lineLength = 0;
 				  }
@@ -178,9 +202,9 @@
 				   item.appendChild(playlistEmoji);
 				   
 				   toAdd.appendChild(item);
+
 				}
 				document.getElementById('playlist').appendChild(toAdd);
-		        document.getElementById('playlist-title').innerHTML = DisplayName;
 
            </script>  
               
