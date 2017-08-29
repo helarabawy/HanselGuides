@@ -5,9 +5,10 @@
 	<head>
 	  <meta name="viewport" content="width=device-width, initial-scale=1">
 	  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
-	  <link rel="stylesheet" href="css/mapViewStyle11.css">	  
+	  <link rel="stylesheet" href="css/mapViewStyle14.css">	  
 	  <script src="https://hammerjs.github.io/dist/hammer.js"></script>
 	  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+	  <script type="text/javascript" src="mapTemplateFunction4.js"></script>
 	  <script src="https://hammerjs.github.io/dist/hammer.js"></script>
 	  <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.39.1/mapbox-gl.js'></script>
 	  <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.39.1/mapbox-gl.css' rel='stylesheet' />
@@ -26,11 +27,11 @@
 	var LocationName = "${param.location}";
 	var DisplayName = "${param.displayName}";
 	
-</script>
-
-<%@ page import = "java.util.*" import="java.io.*" %>
-<%
-String LocationName = (String)request.getParameter("location");
+	</script>
+	
+	<%@ page import = "java.util.*" import="java.io.*" %>
+	<%
+	String LocationName = (String)request.getParameter("location");
 
 	//////////////////////////////////////////////////////////////////////////
 	//////////////////////// PULLING DATA FROM MYSQL /////////////////////////
@@ -62,9 +63,10 @@ String LocationName = (String)request.getParameter("location");
 		} resultSet2.close();
 %>	
 
-<script>
-var index = 0;
-var hasStarted = false;
+	<script>
+	var index = 0;
+	var hasStarted = false;
+	
 	//////////////////////////////////////////////////////////////////////////
 	////////////////////// STORING RESULTSET IN ARRAYS ///////////////////////
 	//////////////////////////////////////////////////////////////////////////
@@ -167,8 +169,8 @@ var hasStarted = false;
 	</header>
 
 
-<div id='map'></div>
-<script>
+	<div id='map'></div>
+	<script>
 
 	////////////////////////////////////////////////////////////////////////
 	//////////////////////////// LOADING MAP ///////////////////////////////
@@ -224,155 +226,167 @@ var hasStarted = false;
 	    };
 	
 
+	
+	//////////////////////////////////////////////////////////////////////////
+	////////////////////// LOADING ALL ATTRACTIONS ///////////////////////////
+	//////////////////////////////////////////////////////////////////////////
 
-//////////////////////////////////////////////////////////////////////////
-////////////////////// LOADING ALL ATTRACTIONS ///////////////////////////
-//////////////////////////////////////////////////////////////////////////
+	function loadIcons() {
+		map.addSource("test", {
+	        "type": "geojson",
+	        "data": datatext
+	    });
+	    map.addSource("test2", {
+	        "type": "geojson",
+	        "data": datatext2
+	    });
+	    
+	    map.addLayer({
+	        "id": "location",
+	        "type": "circle",
+	        "source": "test2",
+	        "paint": {
+	            "circle-radius": 17,
+	            "circle-color": "#58C3B7",
+	            "circle-opacity": 0.8,
+		    "circle-stroke-width": 8,
+		    "circle-stroke-color": "white",
+		    "circle-stroke-opacity": 0.4
+	        }
+	    });
+	    
+	    map.addLayer({
+	        "id": "points",
+	        "type": "circle",
+	        "source": "test",
+	        "paint": {
+	            "circle-radius": 12,
+	            "circle-color": "#2D3A4B",
+		    "circle-stroke-width": 5,
+		    "circle-stroke-color": "#58C3B7",
+		    "circle-stroke-opacity": 0
+	        }
+	    });
+	    map.addLayer({
+	        id: "seq-id",
+	        type: "symbol",
+	        source: "test",
+	        layout: {
+	            "text-field": "{title}",
+	            "text-font": ["Open Sans Semibold", "Arial Unicode MS Bold"],
+	            "text-size": 16,
+	        },
+		paint: {
+		    "text-color": "#fff"
+	        },
+	    });
+	    
+	}
+	
+	</script>
+	
+ <div id="place-dots-container" class="centered-x">
+     <script>
+ 	//////////////////////////////////////////////////////////////////////////
+ 	//////////////////// CREATING PLAYLIST CIRCLES ON LOOP ///////////////////
+ 	//////////////////////////////////////////////////////////////////////////
 
-function loadIcons() {
-	map.addSource("test", {
-        "type": "geojson",
-        "data": datatext
-    });
-    map.addSource("test2", {
-        "type": "geojson",
-        "data": datatext2
-    });
+        var toAddDot = document.createDocumentFragment();
+		for (var i = 0; i < totalSpotCount; i++) {
+		  	// Mother div
+		   var dotItem = document.createElement('div');
+		   dotItem.id = 'd'+i;
+		   dotItem.className = 'place-dot hidden';
+			  
+		   toAddDot.appendChild(dotItem);
+		}
+		document.getElementById('place-dots-container').appendChild(toAddDot);
+       </script>    
+ </div> 
     
-    map.addLayer({
-        "id": "location",
-        "type": "circle",
-        "source": "test2",
-        "paint": {
-            "circle-radius": 17,
-            "circle-color": "#58C3B7",
-            "circle-opacity": 0.8,
-	    "circle-stroke-width": 8,
-	    "circle-stroke-color": "white",
-	    "circle-stroke-opacity": 0.4
-        }
-    });
-    
-    map.addLayer({
-        "id": "points",
-        "type": "circle",
-        "source": "test",
-        "paint": {
-            "circle-radius": 12,
-            "circle-color": "#2D3A4B",
-	    "circle-stroke-width": 5,
-	    "circle-stroke-color": "#58C3B7",
-	    "circle-stroke-opacity": 0
-        }
-    });
-    map.addLayer({
-        id: "seq-id",
-        type: "symbol",
-        source: "test",
-        layout: {
-            "text-field": "{title}",
-            "text-font": ["Open Sans Semibold", "Arial Unicode MS Bold"],
-            "text-size": 16,
-        },
-	paint: {
-	    "text-color": "#fff"
-        },
-    });
-    
-}
-
-</script>
-
-<!--------------- CARD DECLARATION --------------->
-
- <div id="place-box">
- 	<div id="touchable-area">
-        <div id="place-box-border">
-            <button id="place-drag-icon" class=" centered-x material-icons">remove</button>
-        </div>
-        <div id="place-title" class="centered-x"></div>
-          
-        <div id="place-dots-container">
-          <script> //////// CREATING DOTS ON LOOP ///////
-           	var toAddDot = document.createDocumentFragment();
+	<!--------------- CARD DECLARATION --------------->
+	<div id="place-box-container">
+		<div class="place-slider">	 
+			
+			<script>
+			var cardToAdd = document.createDocumentFragment();
 			for (var i = 1; i <= totalSpotCount; i++) {
-				  	// Mother div
-				   var dotItem = document.createElement('div');
-				   dotItem.id = 'd'+i;
-				   dotItem.className = 'place-dot hidden';
-					  
-				   toAddDot.appendChild(dotItem);
-				}
-				document.getElementById('place-dots-container').appendChild(toAddDot);
-         </script>    
-      </div>    
-   
-        <div id="place-line" class="centered-x"></div>
-        <div id="place-info"></div>
-        <div id="go-btn" onclick="navigate()">
-            <div id="go-icon" class="material-icons centered-x">navigation</div>
-            <div class="icon-text centered-x">GO!</div>
-        </div>
-   
-		
-     </div>
-        <div id="place-image" onclick="imagePopUp()">
-			    <img id="image-link">        	
-        </div>
- </div>
-  
-  
-  
+			
+				var placeBox = document.createElement('div');
+				placeBox.className = "place-box";
+			
+					var placeBoxBorder = document.createElement('div');
+					placeBoxBorder.className = "place-box-border";
+					
+						var remove =  document.createElement('div');
+						remove.className = "place-drag-icon centered-x material-icons";
+						remove.innerHTML = 'remove';
+						placeBoxBorder.appendChild(remove);
+					
+					var placeTitle = document.createElement('div');
+					placeTitle.className = "place-title";
+					placeTitle.innerHTML = placeNames[i];
+					
+					var placeLine = document.createElement('div');
+					placeLine.className = "place-line";
+					
+					var placeInfo = document.createElement('div');
+					placeInfo.className = "place-info";
+					placeInfo.innerHTML = placeDescriptions[i];
+					
+					var goBtn = document.createElement('div');
+					goBtn.className = "go-btn";
+					goBtn.onclick = "navigate()";
+						
+						var nav =  document.createElement('div');
+						nav.className = "go-icon material-icons centered-x";
+						nav.innerHTML = 'navigation';
+						goBtn.appendChild(nav);
+						
+						var go =  document.createElement('div');
+						go.className = "icon-text centered-x";
+						go.innerHTML = 'GO!';
+						goBtn.appendChild(go);
+					
+					var placeImage = document.createElement('div');
+					placeImage.className = "place-image";
+					placeImage.onclick = "imagePopUp()"
+							
+						var img =  document.createElement('img');
+						img.className = "image-link";
+						img.src = "/Hansel_Test/placeImages/" + LocationName + "/" + images[i] + ".png";
+						placeImage.appendChild(img);
+				
+				placeBox.appendChild(placeBoxBorder);
+				placeBox.appendChild(placeTitle);
+				placeBox.appendChild(placeLine);
+				placeBox.appendChild(placeInfo);
+				placeBox.appendChild(goBtn);
+				placeBox.appendChild(placeImage);
+				
+				cardToAdd.appendChild(placeBox);	
+			}
+			document.getElementsByClassName("place-slider")[0].appendChild(cardToAdd);
+		</script>
+		 
+		</div>
+	</div>
+	  
+	<div id="img-popup" onclick="imagePopDown()">
+	        <button id="img-close-btn" class="material-icons" onclick="imagePopDown()">close</button>
+	        <img id="img-popup-link" class="centered">
+	</div>
+	  
  <script> 
- 
-////////////////////////////////////////////////////////////////////////
-/////////////////////////// SETTING UP DOTS ////////////////////////////
-////////////////////////////////////////////////////////////////////////
 
- var centerDot = 1;
- var activeDot = 0;
- function moveDots(){
-     var dots = document.getElementsByClassName("place-dot");
-     
-     for (var i = 0; i < totalSpotCount; i++)
-    	 dots[i].className = "place-dot hidden";
-     
-     activeDot = index ;
-     
-     if (activeDot > 0 && activeDot < totalSpotCount - 1)
-         centerDot = activeDot;
-     else if (activeDot == 0)
-         centerDot = activeDot + 1;
-     else if (activeDot == totalSpotCount - 1)
-         centerDot = activeDot - 1;
-     
-     try{dots[centerDot-3].className = "place-dot show smaller";} catch(err){}
-     try{dots[centerDot-2].className = "place-dot show small";} catch(err){}
-     try{dots[centerDot-1].className = "place-dot show";} catch(err){}
-     try{dots[centerDot].className = "place-dot show";} catch(err){}
-     try{dots[centerDot+1].className = "place-dot show";} catch(err){}
-     try{dots[centerDot+2].className = "place-dot show small";} catch(err){}
-     try{dots[centerDot+3].className = "place-dot show smaller";} catch(err){}    
-
-     try{dots[activeDot].className = "place-dot show active";} catch(err){}
- }
- 
-////////////////////////////////////////////////////////////////////////
-//////////////////// SETTING UP TOUCH RESPONSE /////////////////////////
-////////////////////////////////////////////////////////////////////////
-	
-var myElement = document.getElementById('touchable-area');
-var mc = new Hammer(myElement);
-mc.get('swipe').set({ threshold: 10});	
-
-var index = 0;
-var delta = 0.002;
-var isMaximized = false;
+ 	var index = 0;
+	var delta = 0.002;
+	var isMaximized = false;
 	
 
-////////////////////////////////////////////////////////////////////////
-//////////////////////////// CHANGING INDEX ////////////////////////////
-////////////////////////////////////////////////////////////////////////
+	////////////////////////////////////////////////////////////////////////
+	//////////////////////////// CHANGING INDEX ////////////////////////////
+	////////////////////////////////////////////////////////////////////////
 
  	function goToIndex() {
 
@@ -393,11 +407,8 @@ var isMaximized = false;
  		map.getSource('test2').setData({"geometry": {"type": "Point",
 			"coordinates": [xValues[index], yValues[index]] }, "type": "Feature", "properties": {"title":placeIDs[index],}});
 		
-		document.getElementById('place-title').innerHTML = placeNames[index];
-		document.getElementById('place-info').innerHTML = placeDescriptions[index];
 		document.getElementById('title-emoji').innerHTML = emojis[index];
 		document.getElementById('activity').innerHTML = placeActivities[index];
-		document.getElementById('image-link').src = "/Hansel_Test/placeImages/" + LocationName + "/" + images[index] + ".png";
 		document.getElementById('img-popup-link').src = "/Hansel_Test/placeImages/" + LocationName + "/" + images[index] + ".png";
 
 		
@@ -427,16 +438,6 @@ var isMaximized = false;
  			return;
  	}
 
-		
-	mc.on("swipeleft", goToNextStop);
-	mc.on("swiperight", goToPrevStop);
-		
-	
-
-////////////////////////////////////////////////////////////////////////
-////////////////////////////// SCREEN FLY //////////////////////////////
-////////////////////////////////////////////////////////////////////////
-
 	function screenFly() {	
 		map.flyTo({
 	        "center": [xValues[index], yValues[index]],
@@ -445,26 +446,19 @@ var isMaximized = false;
 	 	});
 	}
 	
-
-////////////////////////////////////////////////////////////////////////
-///////////////////////// SWIPE UP AND DOWN ////////////////////////////
-////////////////////////////////////////////////////////////////////////
-	
-	var card = document.getElementById('place-box');
+	////////////////////////////////////////////////////////////////////////
+	///////////////////////// CARD VERTICAL MOTION /////////////////////////
+	////////////////////////////////////////////////////////////////////////
+/*
+	var card = document.getElementsByClassName('place-box')[index];
 	var cardVerticalSwipe = new Hammer(card);
 	cardVerticalSwipe.get('pan').set({direction: Hammer.DIRECTION_ALL });
-	
-	
-	
 
-////////////////////////////////////////////////////////////////////////
-//////////////////// CARD MAXIMIZE AND MINIMIZE ////////////////////////
-////////////////////////////////////////////////////////////////////////
-	   $(document).ready(function() {
-			$('#place-box').animate({height: '85px'}); 
+	$(document).ready(function() {
+			$('.place-box').animate({height: '85px'}); 
 
 			mc.on("panup", function(ev) {
-	  			   $('#place-box').animate({height: '60%'});
+	  			   $('.place-box').animate({height: '60%'});
 		  			 map.flyTo({
 		  		        "center": [xValues[index], yValues[index] - delta],
 		  		        "zoom": 15.3,
@@ -473,7 +467,7 @@ var isMaximized = false;
 		  			 isMaximized = true;
 		    	});
 		   mc.on("pandown", function(ev) {
-	    		   $('#place-box').animate({height: '85px'}); 
+	    		   $('.place-box').animate({height: '85px'}); 
 	    		   map.flyTo({
 		  		        "center": [xValues[index], yValues[index]],
 		  		        "zoom": 15.3,
@@ -484,14 +478,14 @@ var isMaximized = false;
 		   mc.on("tap", function(ev) {
 			   
 			   if (isMaximized) {
-		    		   $('#place-box').animate({height: '85px'}); 
+		    		   $('.place-box').animate({height: '85px'}); 
 		    		   map.flyTo({
 			  		        "center": [xValues[index], yValues[index]],
 			  		        "zoom": 15.3,
 			  		        "speed": 1
 			  		 	});
 			   } else {
-					   $('#place-box').animate({height: '60%'});
+					   $('.place-box').animate({height: '60%'});
 			  			 map.flyTo({
 			  		        "center": [xValues[index], yValues[index] - delta],
 			  		        "zoom": 15.3,
@@ -502,98 +496,87 @@ var isMaximized = false;
 	    	});
 	    	    
 	});
-
-
+*/
+		
 	
+	//////////////////////////////////////////////////////////////////////////
+	////////////////// CLICKING ON VARIOUS LOCATIONS /////////////////////////
+	//////////////////////////////////////////////////////////////////////////
+	map.on('click', function (e) {
+	    var features = map.queryRenderedFeatures(e.point, {layers: ['points']});
+	     if (!features.length) {
+			   $('.place-box').animate({height: '85px'}); 
+			   map.flyTo({
+	  		        "center": [xValues[index], yValues[index]],
+	  		        "zoom": 15.5,
+	  		        "speed": 1
+	  		 	});
+			   isMaximized = false;
+	     } else {
+	    		index = features[0].properties.title - 1;
+	            $('.place-slider').slick('slickGoTo', index);
+	    		goToIndex();
+	    		 $('#place-box').animate({height: '60%'});
+	  			 map.flyTo({
+	  		        "center": [xValues[index], yValues[index] - delta],
+	  		        "zoom": 15.5,
+	  		        "speed": 1
+	  		 	});
+	  			 isMaximized = true; 
+	  			 
+	  	}
+	});
 	
+
+	//////////////////////////////////////////////////////////////////////////
+	////////////////////////// CLICKING PLAYLIST /////////////////////////////
+	//////////////////////////////////////////////////////////////////////////
 	
-//////////////////////////////////////////////////////////////////////////
-////////////////////////////JS FUNCTIONS ////////////////////////////
-//////////////////////////////////////////////////////////////////////////
-function expand() {
-	document.getElementById("fixed-header").style.height = "100%";
-	document.getElementById("fixed-header").style.overflow = "auto";
-	document.getElementById("playlist-container").style.display = "block";
-	document.getElementById("title-container").style.display = "none";
-}
+	function onClick(place) {
+		updateIndex(place);
+		goToIndex(); 
+		collapse();
+	}
 
-function collapse(){
-	document.getElementById("fixed-header").style.height = "10%";
-	document.getElementById("fixed-header").style.overflow = "hidden";
-	document.getElementById("title-container").style.display = "block";
-	document.getElementById("playlist-container").style.display = "none";
-}
+	function updateIndex(place) {
+		index = place.id.substring(1) - 1;
+	}
 
-function onClick(place) {
-	updateIndex(place);
-	goToIndex(); 
-  	collapse();
-}
-
-function updateIndex(place) {
-	index = place.id.substring(1) - 1;
-}
-
-function imagePopUp(){
-    document.getElementById("img-popup").style.display = "block";
-    document.getElementById("image-link").style.display = "none";
-}
-function imagePopDown(){
-    document.getElementById("img-popup").style.display = "none";
-    document.getElementById("image-link").style.display = "block";   
-}
-
-function startGuide() {
-	index = 0;
-	document.getElementById("start-btn").style.display = "none";
-	goToIndex();
-	collapse();
-}
-
-function navigate() {
-	// Forming link
-	var link = "https://www.google.com/maps?saddr=My+Location&daddr=" + yValues[index] + "," + xValues[index] + "&dirflg=w";
+	function startGuide() {
+		index = 0;
+		document.getElementById("start-btn").style.display = "none";
+		goToIndex();
+		collapse();
+	}
 	
-	if( (navigator.platform.indexOf("iPhone") != -1) 
-        || (navigator.platform.indexOf("iPod") != -1)
-        || (navigator.platform.indexOf("iPad") != -1))
-         window.open(link);
-    else
-         window.open(link);
-	
-}
-
-//////////////////////////////////////////////////////////////////////////
-////////////////// CLICKING ON VARIOUS LOCATIONS /////////////////////////
-//////////////////////////////////////////////////////////////////////////
-map.on('click', function (e) {
-    var features = map.queryRenderedFeatures(e.point, {layers: ['points']});
-     if (!features.length) {
-		   $('#place-box').animate({height: '85px'}); 
-		   map.flyTo({
-  		        "center": [xValues[index], yValues[index]],
-  		        "zoom": 15.5,
-  		        "speed": 1
-  		 	});
-		   isMaximized = false;
-     } else {
-    		index = features[0].properties.title - 1;
-    		goToIndex();
-    		 $('#place-box').animate({height: '60%'});
-  			 map.flyTo({
-  		        "center": [xValues[index], yValues[index] - delta],
-  		        "zoom": 15.5,
-  		        "speed": 1
-  		 	});
-  			 isMaximized = true;   
-  	}
-});
 </script> 
 
-<div id="img-popup" onclick="imagePopDown()">
-        <button id="img-close-btn" class="material-icons" onclick="imagePopDown()">close</button>
-        <img id="img-popup-link" class="centered">
-</div>
+
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <script type="text/javascript" src="https://code.jquery.com/jquery-migrate-3.0.0.min.js"></script>
+    <script type="text/javascript" src="slick-1.6.0/slick/slick.min.js"></script>
+    
+    <script type="text/javascript">
+    
+	//////////////////////////////////////////////////////////////////////////
+	////////////////////////// SWIPE SLICK CARDS /////////////////////////////
+	//////////////////////////////////////////////////////////////////////////
+	
+        $('.place-slider').slick({
+            centerMode: true,
+            centerPadding: '5vw',
+            slidesToShow: 1,
+            arrows: false,
+            infinite: false
+        });
+                
+        $('.place-slider').on('beforeChange', function(event, slick, currentSlide, nextSlide){   
+            index = nextSlide;
+            goToIndex();
+        });
+        
+    </script>
+   
   
 </body>
 </html>
