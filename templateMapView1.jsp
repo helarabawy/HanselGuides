@@ -5,13 +5,14 @@
 	<head>
 	  <meta name="viewport" content="width=device-width, initial-scale=1">
 	  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
-	  <link rel="stylesheet" href="css/mapViewStyle14.css">	  
+	  <link rel="stylesheet" href="css/mapViewStyle16.css">	  
 	  <script src="https://hammerjs.github.io/dist/hammer.js"></script>
 	  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-	  <script type="text/javascript" src="mapTemplateFunction4.js"></script>
+	  <script type="text/javascript" src="mapTemplateFunction6.js"></script>
 	  <script src="https://hammerjs.github.io/dist/hammer.js"></script>
 	  <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.39.1/mapbox-gl.js'></script>
 	  <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.39.1/mapbox-gl.css' rel='stylesheet' />
+	  <link rel="stylesheet" type="text/css" href="slick-1.6.0/slick/slick.css"/>
 	  
 	    <style>
 	        body { margin:0; padding:0; }
@@ -303,17 +304,13 @@
 		document.getElementById('place-dots-container').appendChild(toAddDot);
        </script>    
  </div> 
-    
-	<!--------------- CARD DECLARATION --------------->
-	<div id="place-box-container">
-		<div class="place-slider">	 
-			
-			<script>
+     <script>
 			var cardToAdd = document.createDocumentFragment();
-			for (var i = 1; i <= totalSpotCount; i++) {
+			for (var i = 0; i < totalSpotCount; i++) {
 			
 				var placeBox = document.createElement('div');
 				placeBox.className = "place-box";
+				placeBox.onclick = "resizeCard()";
 			
 					var placeBoxBorder = document.createElement('div');
 					placeBoxBorder.className = "place-box-border";
@@ -366,17 +363,24 @@
 				
 				cardToAdd.appendChild(placeBox);	
 			}
-			document.getElementsByClassName("place-slider")[0].appendChild(cardToAdd);
-		</script>
+			</script>
+	<!--------------- CARD DECLARATION --------------->
 		 
+	<div id="place-box-container">
+		<div class="place-slider">	 
+
 		</div>
 	</div>
-	  
+		<script>
+				document.getElementsByClassName("place-slider")[0].appendChild(cardToAdd);	
+		</script>
+			
 	<div id="img-popup" onclick="imagePopDown()">
 	        <button id="img-close-btn" class="material-icons" onclick="imagePopDown()">close</button>
 	        <img id="img-popup-link" class="centered">
 	</div>
-	  
+
+		 
  <script> 
 
  	var index = 0;
@@ -497,7 +501,25 @@
 	    	    
 	});
 */
-		
+
+function placeBoxDown(){
+    document.getElementById("place-box-container").style.height = "85px";
+    document.getElementById("place-dots-container").style.bottom = "87px";
+    isMaximized = false;
+}
+function placeBoxUp(){
+    document.getElementById("place-box-container").style.height = "50%";
+    document.getElementById("place-dots-container").style.bottom = "calc(50vh + 2px)";
+    isMaximized = true;
+}
+
+function resizeCard() {
+	if (isMaximized)
+		placeBoxDown();
+	else
+		placeBoxUp();
+}	
+
 	
 	//////////////////////////////////////////////////////////////////////////
 	////////////////// CLICKING ON VARIOUS LOCATIONS /////////////////////////
@@ -505,7 +527,7 @@
 	map.on('click', function (e) {
 	    var features = map.queryRenderedFeatures(e.point, {layers: ['points']});
 	     if (!features.length) {
-			   $('.place-box').animate({height: '85px'}); 
+	    	 placeBoxDown();
 			   map.flyTo({
 	  		        "center": [xValues[index], yValues[index]],
 	  		        "zoom": 15.5,
@@ -515,8 +537,8 @@
 	     } else {
 	    		index = features[0].properties.title - 1;
 	            $('.place-slider').slick('slickGoTo', index);
+	            placeBoxUp();
 	    		goToIndex();
-	    		 $('#place-box').animate({height: '60%'});
 	  			 map.flyTo({
 	  		        "center": [xValues[index], yValues[index] - delta],
 	  		        "zoom": 15.5,
