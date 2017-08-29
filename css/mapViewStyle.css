@@ -143,6 +143,7 @@ a {
     height:11vw;
     max-height: 40px;
     background-color: #8bede2;
+    z-index: 2;
 }
 .playlist-line{
     position:absolute;
@@ -153,6 +154,7 @@ a {
     width:10px;
     height:350px; /*number of places x 70px*/
     background-color: #65cec2;
+    z-index: 1;
 }
 @media only screen and (min-width: 364px) {
     .playlist-line {
@@ -194,6 +196,7 @@ a {
     color: white;
     font-size: 1.2em;
     text-align: center;
+    z-index:3;
 }
 #start-btn p{
     display: inline-block;
