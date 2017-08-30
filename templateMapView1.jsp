@@ -259,6 +259,7 @@
 			},
 			"properties": {
 				"title": place_id,
+				"name": (i + 1)
 			}
 		}
 		datatext['features'].push(newFeature);
@@ -538,10 +539,10 @@ function resizeCard() {
 	     if (!features.length) {
 	   	 	   placeBoxDown();
 	     } else {
-	    		index = features[0].properties.title - 1;
+	    		index = (features[0].properties.name - 1);
 	            $('.place-slider').slick('slickGoTo', index);
 	            placeBoxUp();
-	    			goToIndex();
+	    		goToIndex();
 	 
 	  	}
 	});
