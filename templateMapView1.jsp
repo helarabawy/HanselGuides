@@ -5,7 +5,7 @@
 	<head>
 	  <meta name="viewport" content="width=device-width, initial-scale=1">
 	  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
-	  <link rel="stylesheet" href="css/mapViewStyle25.css">	  
+	  <link rel="stylesheet" href="css/mapViewStyle39.css">	  
 	  <script src="https://hammerjs.github.io/dist/hammer.js"></script>
 	  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 	  <script type="text/javascript" src="mapTemplateFunction6.js"></script>
@@ -172,23 +172,25 @@
 					  var playlistLinePos;
 					  var diff;
 					  
-					  if (lineLength == i)
-						  diff = 13;
-					  else
-						  diff = 0;
 					  
-					  
+					  // At the end of the day
 					  if (i == totalSpotCount) {
+						  // multiple sequences in that day
 						  if (currentSeqID != 1) {
 							  playlistLineHeight = (lineLength + 1) * 70;
 							  playlistLinePos = -70 * (lineLength) + 13;
-						  } else {
+						  } else { // single sequence that day
 						 	playlistLineHeight = (lineLength) * 70;
 						    playlistLinePos = -70 * (lineLength - 1) + 13;
 						  }
-					  } else {
-						  playlistLineHeight = (lineLength - 2) * 70 ;
-						  playlistLinePos = -70 * (lineLength - 1) + 13 ;
+					  } else { // still in the middle of the day
+						  if (lineLength == i) { // first sequence that day
+							  playlistLineHeight = (lineLength - 2) * 70 ;
+							  playlistLinePos = -70 * (lineLength - 1) + 13 ;
+						  } else { // every other sequence mid-day
+							  playlistLineHeight = (lineLength - 1) * 70 ;
+							  playlistLinePos = -70 * (lineLength ) + 13 ;
+						  }
 					  }
 						  
 					  playlistLine.style.height = playlistLineHeight + "px";
@@ -215,8 +217,11 @@
       
       
 	    <div id="title-container" onclick="expand()">
+	    	<form class="centered-y"><button id="nav-btn" formaction="CFTMmenuView.jsp">
+	    		<i class="material-icons nav-icon">chevron_left</i>
+	    	</button></form>
 	        <h1 id="activity" class="title"></h1>
-	        <button id="menu-btn" class=" centered-x material-icons">remove</button>
+	        <button id="menu-btn" class=" centered-x material-icons">arrow_drop_down</button>
 	        <div id="title-emoji"></div>
 	    </div>
 	</header>
@@ -224,7 +229,6 @@
 
 	<div id='map'></div>
 	<script>
-
 	////////////////////////////////////////////////////////////////////////
 	//////////////////////////// LOADING MAP ///////////////////////////////
 	////////////////////////////////////////////////////////////////////////
@@ -301,7 +305,7 @@
 	        "source": "test2",
 	        "paint": {
 	            "circle-radius": 17,
-	            "circle-color": "#58C3B7",
+	            "circle-color": "#00ccb4",
 	            "circle-opacity": 0.8,
 		    "circle-stroke-width": 8,
 		    "circle-stroke-color": "white",
@@ -317,7 +321,7 @@
 	            "circle-radius": 12,
 	            "circle-color": "#2D3A4B",
 		    "circle-stroke-width": 5,
-		    "circle-stroke-color": "#58C3B7",
+		    "circle-stroke-color": "#00ccb4",
 		    "circle-stroke-opacity": 0
 	        }
 	    });
@@ -387,13 +391,8 @@
 					var goBtn = document.createElement('div');
 					goBtn.className = "go-btn";
 						
-						var nav =  document.createElement('div');
-						nav.className = "go-icon material-icons centered-x";
-						nav.innerHTML = 'navigation';
-						goBtn.appendChild(nav);
-						
 						var go =  document.createElement('div');
-						go.className = "icon-text centered-x";
+						go.className = "icon-text centered";
 						go.innerHTML = 'GO!';
 						goBtn.appendChild(go);
 					
@@ -504,8 +503,8 @@
 
 function placeBoxDown(){
     isMaximized = false;
-    document.getElementById("place-box-container").style.height = "85px";
-    document.getElementById("place-dots-container").style.bottom = "87px";
+    document.getElementById("place-box-container").style.height = "71px";
+    document.getElementById("place-dots-container").style.bottom = "73px";
 }
 function placeBoxUp(){
     isMaximized = true;
@@ -551,15 +550,15 @@ function resizeCard() {
 	///////////////////////////// LOCATING USER //////////////////////////////
 	//////////////////////////////////////////////////////////////////////////
 
-	map.addControl(new mapboxgl.GeolocateControl({
+	/* map.addControl(new mapboxgl.GeolocateControl({
 	    positionOptions: {
 	        enableHighAccuracy: true
 	    },
 	    trackUserLocation: true
-	}));
+	})); */
 
 	//////////////////////////////////////////////////////////////////////////
-	////////////////////////// CLICKING PLAYLIST /////////////////////////////
+	///////////////////// CLICKING WITHIN HEADER /////////////////////////////
 	//////////////////////////////////////////////////////////////////////////
 	
 	function onClick(place) {
@@ -579,6 +578,8 @@ function resizeCard() {
 		collapse();
 	}
 	
+	document.getElementById('nav-btn').addEventListener('click',function (e){ e.stopPropagation(); });
+
 </script> 
 
 
@@ -594,16 +595,18 @@ function resizeCard() {
 	
         $('.place-slider').slick({
             centerMode: true,
-            centerPadding: '5vw',
+            centerPadding: '25px',
             slidesToShow: 1,
             arrows: false,
             infinite: false,
         });
-                
+	
+      
         $('.place-slider').on('beforeChange', function(event, slick, currentSlide, nextSlide){   
             index = nextSlide;
             goToIndex();
-        });
+        }); 
+        
         
         $('.slick-slider').on('click', '.slick-slide', function (e) {
 	        	e.stopPropagation();
@@ -619,6 +622,34 @@ function resizeCard() {
         	e.stopPropagation();
         	imagePopUp();
 		 });
+        
+        
+        var ts;
+        $('.place-box').bind('touchstart', function (e){
+           ts = e.originalEvent.touches[0].clientY;
+        });
+ 
+        $('.place-box').bind('touchend', function (e){
+           var te = e.originalEvent.changedTouches[0].clientY;
+           if(ts > te+50){
+              placeBoxUp();
+           }else if(ts < te-50){
+              placeBoxDown();
+           }
+        });
+ 
+       var ts;
+       $('#title-container').bind('touchstart', function (e){
+          ts = e.originalEvent.touches[0].clientY;
+       });                 
+ 
+       $('#title-container').bind('touchend', function (e){
+          var te = e.originalEvent.changedTouches[0].clientY;
+          if(ts < te-10){
+             expand();
+          }
+       });
+
     </script>
    
   
