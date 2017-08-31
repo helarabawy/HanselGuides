@@ -62,14 +62,13 @@ a {
     box-shadow: 0 2px 5px rgba(0,0,0,.26);
 }
 #nav-btn {
-	display: inline-block;
-	margin: 16px 0 0 16px;
+	margin: 3px 0 0 6px;
 	padding: 0;
 	background-color: Transparent;
 	outline: none;
 }
 .nav-icon {
-    font-size: 1.9em!important;
+    font-size: 40px!important;
     color: white;
 }
 .title {
